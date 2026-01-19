@@ -6,8 +6,11 @@
 #include <fstream>
 #include <map>
 
-bool	isValidFileExtension(const std::string& file);
-void readConfigFile(std::map<std::string, double>& testMap, const std::string& filename);
+bool		isValidFileExtension(const std::string& file);
+bool 		readInputFile(const std::string& filename, char separatingCharacter);
+std::string	trimWhiteSpaces(std::string s1);
+bool		isValidDate(const std::string date);
+bool		isValidPrice(const std::string& price);
 
 int	main(int argc, char **argv)
 {
@@ -19,8 +22,7 @@ int	main(int argc, char **argv)
 	}
 	std::string strFile = argv[1];
 	isValidFileExtension(strFile);
-	std::map<std::string, double> testMap;
-	readConfigFile(testMap, strFile);
+	readInputFile(strFile, '|');
 	std::cout << "finished the while loop" << std::endl;
 }
 
@@ -35,53 +37,67 @@ bool	isValidFileExtension(const std::string& file)
 	return true;
 }
 
-void readConfigFile(std::map<std::string, double>& testMap, const std::string& filename)
+// csv file: date exchange rate
+// input.txt: date price 
+// read the input.txt line by line, validate the date, synthax and price (positive integer and float)
+// then the container is the one to actually store the csv file, not input.txt.
+bool readInputFile(const std::string& filename, char separatingCharacter)
 {
 	std::ifstream file(filename.c_str());
-	(void)testMap;
-	if (!file.is_open())
-	{
-		std::cerr << "Unable to open the config file: " + filename << std::endl;
-		return ;
-	}
+
+	if (!file.is_open()) { std::cerr << "Unable to open the config file: " + filename << std::endl; return false; }
 	std::string line;
+
 	while (std::getline(file, line))
 	{
 		if (line.empty())
 			continue ;
 		
 		// Find the position of the '|' character
-		size_t separatorPos = line.find('|');
-		if (separatorPos == line.npos)
-		{
-			std::cerr << "Invalid config line: " + line << std::endl;
-			return ;
-		}
-		std::string key = line.substr(0, separatorPos);
-		std::string value = line.substr(separatorPos + 1);
-		std::cout << "before trimming key: " + key << "." << std::endl; 
-		std::cout << "before trimming value: " + value << "." << std::endl; 
-
-		// Trim whitespaces
-		key.erase(0, key.find_first_not_of(" \t")); // [first, last(
-		key.erase(key.find_last_not_of(" \t") + 1); // erases all characters after index, in this case the first trailing whitespace
-		std::cout << "after triming key: " << key << "." << std::endl;
-		value.erase(0, value.find_first_not_of(" \t"));
-		value.erase(value.find_last_not_of(" \t") + 1);
-		std::cout << "after triming value: " << value << "." << std::endl;
-		std::cout << std::endl;
+		size_t separatorPos = line.find(separatingCharacter);
+		if (separatorPos == line.npos) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
+		std::string key = trimWhiteSpaces(line.substr(0, separatorPos));
+		std::string value = trimWhiteSpaces(line.substr(separatorPos + 1));
 
 		// Check if key or value is empty
-		if (key.empty())
-		{
-			std::cerr << "Empty date at line : " + line << std::endl;
-			return ;
-		}
-		if (value.empty())
-		{
-			std::cerr << "Empty exchange rate at line : " + line << std::endl;
-			return ;
-		}
-
+		if (key.empty()) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
+		if (value.empty()) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
+		
+		// Check if input is valid (date and number)
+		if (!isValidDate(key)) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
+		if (isValidPrice(value)) { continue; }
+		
+		// Insert the values in the map container
 	}
+	return (true);
 }
+
+std::string	trimWhiteSpaces(std::string s1)
+{
+	s1.erase(0, s1.find_first_not_of(" \t")); // [first, last(
+	s1.erase(s1.find_last_not_of(" \t") + 1);
+	return s1;
+}
+
+bool	isValidDate(std::string date)
+{
+	size_t firstHyphenPosition = date.find('-');
+	size_t secondHypenPosition = date.find('-', firstHyphenPosition + 1);
+
+	if (firstHyphenPosition == date.npos || secondHypenPosition == date.npos)
+		return false;
+	
+	std::string year = date.substr(0, firstHyphenPosition);
+	std::string month = date.substr(firstHyphenPosition + 1, secondHypenPosition - firstHyphenPosition);
+	std::string day = date.substr(secondHypenPosition + 1);
+
+	if (date.find('-', secondHypenPosition + 1) != date.npos)
+		return (false);
+}
+
+bool	isValidPrice(const std::string& price)
+{
+	(void)price;
+	return (true);
+}
+

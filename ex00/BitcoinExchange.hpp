@@ -1,14 +1,14 @@
 #ifndef BITCOINEXCHANGE_HPP
 # define BITCOINEXCHANGE_HPP
 
-// class testClass
-// {
-// private:
-	
-// public:
-// 	testClass(/* args */);
-// 	~testClass();
-// };
+# define MINYEAR 2009
+# define MAXYEAR 2026
 
+struct Date
+{
+	int y;
+	int m;
+	int d;
+};
 
 #endif
