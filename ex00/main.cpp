@@ -9,9 +9,12 @@
 
 bool		isValidFileExtension(const std::string& file);
 bool 		readInputFile(const std::string& filename, char separatingCharacter);
+bool		isValidLine(std::string& line, char separatingCharacter);
 std::string	trimWhiteSpaces(std::string s1);
 bool		isValidPrice(const std::string& price);
-void	isValidDateSynthax(std::string date);
+bool		isValidDate(Date *datestruct);
+bool		isLeap(int year);
+
 
 int	main(int argc, char **argv)
 {
@@ -32,45 +35,100 @@ bool	isValidFileExtension(const std::string& file)
 	std::string strFile = file;
 	if ((strFile.substr(strFile.find_last_of(".") + 1 )) != "txt")
 	{
-		std::cerr << "Error: file needs .txt extension." << std::endl;
+		std::cerr << "Error: could not open file." << std::endl;
 		return false;
 	}
 	return true;
 }
 
-// csv file: date exchange rate
-// input.txt: date price 
-// read the input.txt line by line, validate the date, synthax and price (positive integer and float)
-// then the container is the one to actually store the csv file, not input.txt.
 bool readInputFile(const std::string& filename, char separatingCharacter)
 {
+	// Check if filr is open before starting
 	std::ifstream file(filename.c_str());
-
 	if (!file.is_open()) { std::cerr << "Unable to open the config file: " + filename << std::endl; return false; }
+	
 	std::string line;
 
+	// Reading protocol to check line by line (no ending the program if an error is found)
 	while (std::getline(file, line))
 	{
 		if (line.empty())
 			continue ;
-		
-		// Find the position of the '|' character
-		size_t separatorPos = line.find(separatingCharacter);
-		if (separatorPos == line.npos) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
-		std::string key = trimWhiteSpaces(line.substr(0, separatorPos));
-		std::string value = trimWhiteSpaces(line.substr(separatorPos + 1));
 
-		// Check if key or value is empty
-		if (key.empty()) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
-		if (value.empty()) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
-		
-		// Check if input is valid (date and number)
-		isValidDateSynthax(key);
-		//if (!isValidDate(key)) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
-		if (isValidPrice(value)) { continue; }
-		
-		// Insert the values in the map container
+		if (!(isValidLine(line, separatingCharacter)))
+		{
+			std::cerr << "Error: bad input => " + line << std::endl;
+			continue;
+		}
+		// // Insert the values in the map container
 	}
+	return (true);
+}
+
+bool	isValidLine(std::string& line, char separatingCharacter)
+{
+	Date dateStruct;
+
+	if (line.empty())
+			return false;
+
+	std::stringstream ss(line);
+	int exchangeRate;
+	char firstDateHyphen, secondDateHyphen, verticalBar;
+
+	ss >> dateStruct.y >> firstDateHyphen >> dateStruct.m >> secondDateHyphen >> dateStruct.d >> verticalBar >> exchangeRate;
+	
+	//  Check separators 
+	if (firstDateHyphen != '-' || secondDateHyphen != '-' ||
+		verticalBar != separatingCharacter)
+		return false;
+	
+	// Check if input is valid (date and number)
+	if (!isValidDate(&dateStruct))
+		return false;
+	
+	return true;
+}
+
+
+bool	isValidDate(Date *datestruct)
+{
+	// Check year and month are in the right range
+	if (!(MINYEAR <= datestruct->y && datestruct->y <= MAXYEAR) ||
+		!(1 <= datestruct->m && datestruct->m <= 12) ||
+		!(1 <= datestruct->d && datestruct->d <= 31))
+	{
+		std::cout << "first date check failed" << std::endl;
+		return false;
+	}
+	
+	// Handle february month with leap year
+	if (datestruct->m == 2)
+	{
+		if (isLeap(datestruct->y))
+			return (datestruct->d <= 29);
+		else
+			return (datestruct->d <= 28);
+	}
+	
+	// Handle april june september have  30 days max
+	if (datestruct->m == 4 || datestruct->m == 6 ||
+		datestruct->m == 9 || datestruct->m == 11)
+		return (datestruct->d <= 30);
+		
+	return true;
+}
+	
+bool	isLeap(int year)
+{
+	return (((year % 4 == 0) &&
+	(year % 100 != 0)) ||
+	(year % 400 == 0));
+}
+
+bool	isValidPrice(const std::string& price)
+{
+	(void)price;
 	return (true);
 }
 
@@ -80,39 +138,3 @@ std::string	trimWhiteSpaces(std::string s1)
 	s1.erase(s1.find_last_not_of(" \t") + 1);
 	return s1;
 }
-
-void	isValidDateSynthax(std::string date)
-{
-	// size_t firstHyphenPosition = date.find('-');
-	// size_t secondHypenPosition = date.find('-', firstHyphenPosition + 1);
-
-	// if (firstHyphenPosition == date.npos || secondHypenPosition == date.npos)
-	// 	return false;
-	
-	// std::string year = date.substr(0, firstHyphenPosition);
-	// std::string month = date.substr(firstHyphenPosition + 1, secondHypenPosition - firstHyphenPosition);
-	// std::string day = date.substr(secondHypenPosition + 1);
-
-	// if (date.find('-', secondHypenPosition + 1) != date.npos)
-	// 	return (false);
-
-	int year, month, day;
-	char first, second;
-	std::stringstream ss(date);
-
-	ss >> year >> first >> month >> second >> day;
-	if (first != '-' || second != '-')
-		return ; 
-	// what checks do I need to do for the first year and month to exclude other possibilities
-	if (!(MINYEAR <= year && year <= MAXYEAR) || !(1 <= month && month <= 12) || !(1 <= day && day <= 31))
-		return ;
-	
-	std::cout << "Date is valid " << year << first << month << second << day << std::endl; // this is just for testing 
-}
-
-bool	isValidPrice(const std::string& price)
-{
-	(void)price;
-	return (true);
-}
-
