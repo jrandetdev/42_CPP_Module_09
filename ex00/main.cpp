@@ -5,12 +5,13 @@
 #include <algorithm>
 #include <fstream>
 #include <map>
+#include <sstream>
 
 bool		isValidFileExtension(const std::string& file);
 bool 		readInputFile(const std::string& filename, char separatingCharacter);
 std::string	trimWhiteSpaces(std::string s1);
-bool		isValidDate(const std::string date);
 bool		isValidPrice(const std::string& price);
+void	isValidDateSynthax(std::string date);
 
 int	main(int argc, char **argv)
 {
@@ -64,7 +65,8 @@ bool readInputFile(const std::string& filename, char separatingCharacter)
 		if (value.empty()) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
 		
 		// Check if input is valid (date and number)
-		if (!isValidDate(key)) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
+		isValidDateSynthax(key);
+		//if (!isValidDate(key)) { std::cerr << "Error: bad input => " + line << std::endl; continue; }
 		if (isValidPrice(value)) { continue; }
 		
 		// Insert the values in the map container
@@ -79,20 +81,33 @@ std::string	trimWhiteSpaces(std::string s1)
 	return s1;
 }
 
-bool	isValidDate(std::string date)
+void	isValidDateSynthax(std::string date)
 {
-	size_t firstHyphenPosition = date.find('-');
-	size_t secondHypenPosition = date.find('-', firstHyphenPosition + 1);
+	// size_t firstHyphenPosition = date.find('-');
+	// size_t secondHypenPosition = date.find('-', firstHyphenPosition + 1);
 
-	if (firstHyphenPosition == date.npos || secondHypenPosition == date.npos)
-		return false;
+	// if (firstHyphenPosition == date.npos || secondHypenPosition == date.npos)
+	// 	return false;
 	
-	std::string year = date.substr(0, firstHyphenPosition);
-	std::string month = date.substr(firstHyphenPosition + 1, secondHypenPosition - firstHyphenPosition);
-	std::string day = date.substr(secondHypenPosition + 1);
+	// std::string year = date.substr(0, firstHyphenPosition);
+	// std::string month = date.substr(firstHyphenPosition + 1, secondHypenPosition - firstHyphenPosition);
+	// std::string day = date.substr(secondHypenPosition + 1);
 
-	if (date.find('-', secondHypenPosition + 1) != date.npos)
-		return (false);
+	// if (date.find('-', secondHypenPosition + 1) != date.npos)
+	// 	return (false);
+
+	int year, month, day;
+	char first, second;
+	std::stringstream ss(date);
+
+	ss >> year >> first >> month >> second >> day;
+	if (first != '-' || second != '-')
+		return ; 
+	// what checks do I need to do for the first year and month to exclude other possibilities
+	if (!(MINYEAR <= year && year <= MAXYEAR) || !(1 <= month && month <= 12) || !(1 <= day && day <= 31))
+		return ;
+	
+	std::cout << "Date is valid " << year << first << month << second << day << std::endl; // this is just for testing 
 }
 
 bool	isValidPrice(const std::string& price)
