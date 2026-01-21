@@ -9,12 +9,6 @@
 
 bool		isValidFileExtension(const std::string& file);
 bool 		readInputFile(const std::string& filename, char separatingCharacter);
-bool		isValidLine(std::string& line, char separatingCharacter);
-std::string	trimWhiteSpaces(std::string s1);
-bool		isValidPrice(const std::string& price);
-bool		isValidDate(Date *datestruct);
-bool		isLeap(int year);
-
 
 int	main(int argc, char **argv)
 {
@@ -30,31 +24,28 @@ int	main(int argc, char **argv)
 	std::cout << "finished the while loop" << std::endl;
 }
 
-bool	isValidFileExtension(const std::string& file)
+
+bool readInputFile(const std::string& filename, char separatingCharacter)
 {
-	std::string strFile = file;
-	if ((strFile.substr(strFile.find_last_of(".") + 1 )) != "txt")
+	// Check for .txt extension
+	if (!isValidFileExtension(filename))
 	{
 		std::cerr << "Error: could not open file." << std::endl;
 		return false;
 	}
-	return true;
-}
-
-bool readInputFile(const std::string& filename, char separatingCharacter)
-{
+	
 	// Check if filr is open before starting
 	std::ifstream file(filename.c_str());
-	if (!file.is_open()) { std::cerr << "Unable to open the config file: " + filename << std::endl; return false; }
+	if (!file.is_open()) { std::cerr << "Error: could not open file." << std::endl; return false; }
 	
 	std::string line;
-
+	
 	// Reading protocol to check line by line (no ending the program if an error is found)
 	while (std::getline(file, line))
 	{
 		if (line.empty())
 			continue ;
-
+		
 		if (!(isValidLine(line, separatingCharacter)))
 		{
 			std::cerr << "Error: bad input => " + line << std::endl;
@@ -65,6 +56,13 @@ bool readInputFile(const std::string& filename, char separatingCharacter)
 	return (true);
 }
 
+bool	isValidFileExtension(const std::string& file)
+{
+	if ((file.substr(file.find_last_of(".") + 1 )) != "txt")
+		return false;
+	return true;
+}
+
 bool	isValidLine(std::string& line, char separatingCharacter)
 {
 	Date dateStruct;
@@ -73,18 +71,19 @@ bool	isValidLine(std::string& line, char separatingCharacter)
 			return false;
 
 	std::stringstream ss(line);
-	int exchangeRate;
-	char firstDateHyphen, secondDateHyphen, verticalBar;
+	float bitcoinAmount;
+	char firstDateHyphen, secondDateHyphen, separation;
 
-	ss >> dateStruct.y >> firstDateHyphen >> dateStruct.m >> secondDateHyphen >> dateStruct.d >> verticalBar >> exchangeRate;
+	ss >> dateStruct.y >> firstDateHyphen >> dateStruct.m >> secondDateHyphen >> dateStruct.d >>
+		separation >> bitcoinAmount;
 	
 	//  Check separators 
 	if (firstDateHyphen != '-' || secondDateHyphen != '-' ||
-		verticalBar != separatingCharacter)
+		separation != separatingCharacter)
 		return false;
 	
 	// Check if input is valid (date and number)
-	if (!isValidDate(&dateStruct))
+	if (!isValidDate(&dateStruct) || !isValidExchangeRate(bitcoinAmount))
 		return false;
 	
 	return true;
@@ -126,9 +125,11 @@ bool	isLeap(int year)
 	(year % 400 == 0));
 }
 
-bool	isValidPrice(const std::string& price)
+bool	isValidExchangeRate(float bitcoinAmount)
 {
-	(void)price;
+	if (bitcoinAmount <= 0 || bitcoinAmount >= 1000)
+		return false;
+	
 	return (true);
 }
 
