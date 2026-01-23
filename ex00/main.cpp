@@ -14,8 +14,8 @@ int	main(int argc, char **argv)
 	}
 
 	// Check file and extract data in container using the constructor which takres an ifstream
-	std::ifstream csvFileStream("data_copy.csv");
-	if (!isValidFile("data_copy.csv", csvFileStream, "csv"))
+	std::ifstream csvFileStream("data.csv");
+	if (!isValidFile("data.csv", csvFileStream, "csv"))
 		return 1;
 	BitcoinExchange btcdata(csvFileStream);
 	//btcdata.printMapElement();
@@ -66,6 +66,9 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 		// Get the date for searching the map
 		extractDateKey(&elements, &input);
 		float result = btcData.getBitcoinPriceatDate(&input);
+		//std::cout << "result is " << result << std::endl;
+		if (result == -1.0)
+			continue;
 		std::cout << input.date << " => " << input.value << " = " << result << std::endl;
 		ss.str("");
 		ss.clear();
