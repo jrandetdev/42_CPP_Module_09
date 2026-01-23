@@ -3,6 +3,12 @@
 
 #include <iostream>
 
+struct InputData
+{
+	std::string date;
+	float		value;
+};
+
 struct SeparatedTokens
 {
 	int		year;

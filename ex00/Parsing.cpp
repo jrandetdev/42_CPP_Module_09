@@ -87,7 +87,9 @@ void	extractDateKey(SeparatedTokens *elements, InputData *input)
 	std::stringstream ss;
 
 	ss << std::setfill('0') << std::setw(4) << elements->year
+		<< elements->firstHyphen
 		<< std::setw(2) << elements->month
+		<< elements->secondHyphen
 		<< std::setw(2) << elements->day;
 
 	ss >> input->date;

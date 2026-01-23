@@ -3,7 +3,7 @@
 
 #include <iomanip>
 
-static bool readAndTreatData(const std::string& filename, const BitcoinExchange& btcData);
+static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcData);
 
 int	main(int argc, char **argv)
 {
@@ -14,17 +14,17 @@ int	main(int argc, char **argv)
 	}
 
 	// Check file and extract data in container using the constructor which takres an ifstream
-	std::ifstream csvFileStream("data.csv");
-	if (!isValidFile("data.csv", csvFileStream, "csv"))
+	std::ifstream csvFileStream("data_copy.csv");
+	if (!isValidFile("data_copy.csv", csvFileStream, "csv"))
 		return 1;
 	BitcoinExchange btcdata(csvFileStream);
-	btcdata.printMapElement();
+	//btcdata.printMapElement();
 	readAndTreatData(argv[1], btcdata);
 	return (0);
 }
 
 
-static bool readAndTreatData(const std::string& filename, const BitcoinExchange& btcData)
+static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcData)
 {
 	(void)btcData;
 	std::ifstream	file(filename.c_str());
@@ -65,10 +65,10 @@ static bool readAndTreatData(const std::string& filename, const BitcoinExchange&
 
 		// Get the date for searching the map
 		extractDateKey(&elements, &input);
+		float result = btcData.getBitcoinPriceatDate(&input);
+		std::cout << input.date << " => " << input.value << " = " << result << std::endl;
 		ss.str("");
 		ss.clear();
-		
-
 	}
 	return true;
 }

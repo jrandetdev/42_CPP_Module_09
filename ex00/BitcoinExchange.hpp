@@ -8,15 +8,11 @@
 #include <fstream>
 #include <map>
 #include <sstream>
+#include "Parsing.hpp"
 
 # define MINYEAR 2009
 # define MAXYEAR 2026
 
-struct InputData
-{
-	std::string date;
-	float		value;
-};
 
 class	BitcoinExchange
 {
@@ -29,7 +25,8 @@ class	BitcoinExchange
 		BitcoinExchange& operator=(const BitcoinExchange& other);
 		~BitcoinExchange();
 
-		void printMapElement();
+		void	printMapElement();
+		float	getBitcoinPriceatDate(InputData *input);
 };
 
 #endif
