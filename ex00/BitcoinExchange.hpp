@@ -21,12 +21,15 @@ struct InputData
 class	BitcoinExchange
 {
 	private:
-		std::map<std::string, std::string> historicalData;
+		std::map<std::string, float> historicalData;
 	public:
 		BitcoinExchange();
+		BitcoinExchange(std::ifstream& csvFileStream);
 		BitcoinExchange(const BitcoinExchange& other);
 		BitcoinExchange& operator=(const BitcoinExchange& other);
 		~BitcoinExchange();
+
+		void printMapElement();
 };
 
 #endif

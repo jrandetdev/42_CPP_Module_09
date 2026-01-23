@@ -3,13 +3,14 @@
 
 bool	isValidFile(const std::string& filename, std::ifstream& file, const std::string& extension)
 {
-	// Check for .txt extension
+	// Check if file is open (expensive system call, do it once)
 	if (!file.is_open())
 	{
 		std::cerr << "Error: could not open file." << std::endl;
 		return false;
 	}
 	
+	// Checking hte extension to see if it is correct
 	size_t dotPos = filename.find_last_of('.');
 	if (filename.substr(dotPos + 1) != extension)
 	{

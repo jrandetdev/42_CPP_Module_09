@@ -3,7 +3,7 @@
 
 #include <iomanip>
 
-static bool	readInputFile(const std::string& filename);
+static bool readAndTreatData(const std::string& filename, const BitcoinExchange& btcData);
 
 int	main(int argc, char **argv)
 {
@@ -12,18 +12,21 @@ int	main(int argc, char **argv)
 		std::cerr << "Error: could not open a file." << std::endl;
 		return 1;
 	}
-	std::string inputFile = argv[1];
+
+	// Check file and extract data in container using the constructor which takres an ifstream
 	std::ifstream csvFileStream("data.csv");
 	if (!isValidFile("data.csv", csvFileStream, "csv"))
 		return 1;
-	readInputFile(inputFile);
-
+	BitcoinExchange btcdata(csvFileStream);
+	btcdata.printMapElement();
+	readAndTreatData(argv[1], btcdata);
 	return (0);
 }
 
 
-static bool readInputFile(const std::string& filename)
+static bool readAndTreatData(const std::string& filename, const BitcoinExchange& btcData)
 {
+	(void)btcData;
 	std::ifstream	file(filename.c_str());
 	SeparatedTokens elements;
 	InputData		input;
@@ -64,8 +67,8 @@ static bool readInputFile(const std::string& filename)
 		extractDateKey(&elements, &input);
 		ss.str("");
 		ss.clear();
-
+		
 
 	}
 	return true;
-	}
+}
