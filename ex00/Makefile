@@ -5,7 +5,7 @@ CXX			=	c++
 CXXFLAGS	=	-std=c++98 -Wall -Werror -Wextra -g -pedantic 
 LDINCLUDE	=	-I$(DIR_SRC)
 
-SRCS		=	main.cpp BitcoinExchange.cpp
+SRCS		=	main.cpp BitcoinExchange.cpp Parsing.cpp
 SRCS_NAME	=	$(basename $(SRCS))
 OBJS		=	$(addsuffix .o, $(addprefix $(DIR_BUILD)/, $(SRCS_NAME)))
 

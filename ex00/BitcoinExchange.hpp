@@ -12,20 +12,21 @@
 # define MINYEAR 2009
 # define MAXYEAR 2026
 
-struct Date
+struct InputData
 {
-	int y;
-	int m;
-	int d;
+	std::string date;
+	float		value;
 };
 
-// 
-bool		isValidLine(std::string& line, char separatingCharacter);
-std::string	trimWhiteSpaces(std::string s1);
-
-
-bool		isValidPrice(const std::string& price);
-bool		isValidDate(Date *datestruct);
-bool		isLeap(int year);
+class	BitcoinExchange
+{
+	private:
+		std::map<std::string, std::string> historicalData;
+	public:
+		BitcoinExchange();
+		BitcoinExchange(const BitcoinExchange& other);
+		BitcoinExchange& operator=(const BitcoinExchange& other);
+		~BitcoinExchange();
+};
 
 #endif
