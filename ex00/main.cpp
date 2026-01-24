@@ -14,8 +14,9 @@ int	main(int argc, char **argv)
 	}
 
 	// Check file and extract data in container using the constructor which takres an ifstream
-	std::ifstream csvFileStream("data.csv");
-	if (!isValidFile("data.csv", csvFileStream, "csv"))
+	std::ifstream csvFileStream("bad_data.csv");
+	if (!isValidFile("bad_data.csv", csvFileStream, "csv") || 
+		!isValidFirstLine("bad_data.csv", csvFileStream, "date,exchange_rate"))
 		return 1;
 	BitcoinExchange btcdata(csvFileStream);
 	//btcdata.printMapElement();
@@ -31,9 +32,9 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 	SeparatedTokens elements;
 	InputData		input;
 	
+	if (!isValidFile(filename, file, "txt") || !isValidFirstLine(filename, file, "date | value"))
+	return false;
 	std::string line;
-	if (!isValidFile(filename, file, "txt") || !isValidFirstLine(file, line))
-		return false;
 
 	while (file.peek() != EOF)
 	{
@@ -46,7 +47,8 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 			>> elements.month >> elements.secondHyphen
 			>> elements.day >> elements.verticalBar
 			>> input.value) || elements.firstHyphen != '-' ||
-			elements.secondHyphen != '-' || elements.verticalBar != '|')
+			elements.secondHyphen != '-' || elements.verticalBar != '|' ||
+			!isValidDate(&elements))
 		{
 			std::cout << "Error: bad input => " + line << std::endl;
 			continue;
@@ -55,13 +57,6 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 		// Check negative value to have the correct error message 
 		if (!isValidValue(input.value))
 			continue;
-
-		// Check the date
-		if (!isValidDate(&elements))
-		{
-			std::cout << "Error: bad input => " + line << std::endl;
-			continue;
-		}
 
 		// Get the date for searching the map
 		extractDateKey(&elements, &input);

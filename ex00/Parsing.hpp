@@ -20,7 +20,7 @@ struct SeparatedTokens
 };
 
 bool	isValidFile(const std::string& filename, std::ifstream& file, const std::string& extension);
-bool	isValidFirstLine(std::ifstream& file, std::string& line);
+bool	isValidFirstLine(const std::string& filename, std::ifstream& file, const std::string& firstLine);
 bool	isValidValue(float value);
 bool	isValidDate(SeparatedTokens *elements);
 void	extractDateKey(SeparatedTokens *elements, InputData *input);

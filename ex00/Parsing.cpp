@@ -20,13 +20,14 @@ bool	isValidFile(const std::string& filename, std::ifstream& file, const std::st
 	return true;
 }
 
-bool	isValidFirstLine(std::ifstream& file, std::string& line)
+bool	isValidFirstLine(const std::string& filename, std::ifstream& file, const std::string& firstLine)
 {
 	// Check first line is date | value as asked by the subject
+	std::string line;
 	getline(file, line);
-	if (line != "date | value")
+	if (line != firstLine.c_str())
 	{
-		std::cerr << "Error: file needs to start with date | value" << std::endl;
+		std::cerr << "Error: file " << filename << " needs to start with " << firstLine << "." << std::endl;
 		return false;
 	}
 	return true;
