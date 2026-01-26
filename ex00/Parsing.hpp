@@ -3,27 +3,12 @@
 
 #include <iostream>
 
-struct InputData
-{
-	std::string date;
-	float		value;
-};
-
-struct SeparatedTokens
-{
-	int		year;
-	int		month;
-	int		day;
-	char	firstHyphen;
-	char	secondHyphen;
-	char	verticalBar;
-};
-
-bool	isValidFile(const std::string& filename, std::ifstream& file, const std::string& extension);
-bool	isValidFirstLine(std::ifstream& file, std::string& line);
+bool	isValidExtension(const std::string& filename, const std::string& extension);
+bool	isFileOpen(std::ifstream& file);
+bool	isValidFirstLine(std::string& line, const std::string& firstLine);
 bool	isValidValue(float value);
-bool	isValidDate(SeparatedTokens *elements);
-void	extractDateKey(SeparatedTokens *elements, InputData *input);
+bool	isValidDate(const std::string& date);
 bool	isLeap(int year);
+float	getFloat(std::string& value);
 
 #endif

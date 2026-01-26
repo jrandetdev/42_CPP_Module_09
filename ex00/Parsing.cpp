@@ -1,15 +1,8 @@
 #include "BitcoinExchange.hpp"
 #include "Parsing.hpp"
 
-bool	isValidFile(const std::string& filename, std::ifstream& file, const std::string& extension)
+bool	isValidExtension(const std::string& filename, const std::string& extension)
 {
-	// Check if file is open (expensive system call, do it once)
-	if (!file.is_open())
-	{
-		std::cerr << "Error: could not open file." << std::endl;
-		return false;
-	}
-	
 	// Checking hte extension to see if it is correct
 	size_t dotPos = filename.find_last_of('.');
 	if (filename.substr(dotPos + 1) != extension)
@@ -20,16 +13,32 @@ bool	isValidFile(const std::string& filename, std::ifstream& file, const std::st
 	return true;
 }
 
-bool	isValidFirstLine(std::ifstream& file, std::string& line)
+bool	isFileOpen(std::ifstream& file)
 {
-	// Check first line is date | value as asked by the subject
-	getline(file, line);
-	if (line != "date | value")
+	// Check if file is open (expensive system call, do it once)
+	if (!file.is_open())
 	{
-		std::cerr << "Error: file needs to start with date | value" << std::endl;
+		std::cerr << "Error: could not open file." << std::endl;
 		return false;
 	}
 	return true;
+}
+
+bool	isValidFirstLine(std::string& line, const std::string& firstLine)
+{
+	// Check first line is date | value as asked by the subject
+	if (line != firstLine)
+		return false;
+	return true;
+}
+
+float	getFloat(std::string& value)
+{
+	char *end = NULL;
+	float floatTemp = std::strtof(value.c_str(), &end);
+	if (end == value || errno == ERANGE)
+		return (-1.0);
+	return floatTemp;
 }
 
 bool	isValidValue(float value)
@@ -48,30 +57,44 @@ bool	isValidValue(float value)
 }
 
 
-bool	isValidDate(SeparatedTokens *elements)
+bool	isValidDate(const std::string& date)
 {
+	int year, month, day;
+
+	if (date[4] != '-' || date[7] != '-')
+		return false;
+
+	size_t firstPos = date.find('-');
+	size_t secondPos = date.find_last_of('-');
+
+	year = atoi((date.substr(0, firstPos)).c_str());
+	month = atoi((date.substr(firstPos + 1, 2)).c_str());
+	day = atoi((date.substr(secondPos + 1, 2)).c_str());
+
 	// Check year and month are in the right range
-	if (!(MINYEAR <= elements->year && elements->year <= MAXYEAR) ||
-	!(1 <= elements->month && elements->month <= 12) ||
-	!(1 <= elements->day && elements->day <= 31))
+	if (!(MINYEAR <= year && year <= MAXYEAR) ||
+	!(1 <= month && month <= 12) ||
+	!(1 <= day && day <= 31))
 	{
 		return false;
 	}
 	
 	// Handle february month with leap year
-	if (elements->month == 2)
+	if (month == 2)
 	{
-		if (isLeap(elements->year))
-			return (elements->day <= 29);
+		if (isLeap(year))
+			return (day <= 29);
 		else
-			return (elements->day <= 28);
+			return (day <= 28);
 	}
 	
 	// Handle april june september have  30 days max
-	if (elements->month == 4 || elements->month == 6 ||
-		elements->month == 9 || elements->month == 11)
-		return (elements->day <= 30);
-		
+	if (month == 4 || month == 6 ||
+		month == 9 || month == 11)
+	{
+		return (day <= 30);
+	}
+
 	return true;
 }
 	
@@ -80,17 +103,4 @@ bool	isLeap(int year)
 	return (((year % 4 == 0) &&
 	(year % 100 != 0)) ||
 	(year % 400 == 0));
-}
-	
-void	extractDateKey(SeparatedTokens *elements, InputData *input)
-{
-	std::stringstream ss;
-
-	ss << std::setfill('0') << std::setw(4) << elements->year
-		<< elements->firstHyphen
-		<< std::setw(2) << elements->month
-		<< elements->secondHyphen
-		<< std::setw(2) << elements->day;
-
-	ss >> input->date;
 }

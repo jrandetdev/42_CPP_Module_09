@@ -8,6 +8,7 @@
 #include <fstream>
 #include <map>
 #include <sstream>
+#include <exception>
 #include "Parsing.hpp"
 
 # define MINYEAR 2009
@@ -19,14 +20,14 @@ class	BitcoinExchange
 	private:
 		std::map<std::string, float> historicalData;
 	public:
+		// Canonical form
 		BitcoinExchange();
-		BitcoinExchange(std::ifstream& csvFileStream);
+		BitcoinExchange(const std::string& fileName);
 		BitcoinExchange(const BitcoinExchange& other);
 		BitcoinExchange& operator=(const BitcoinExchange& other);
 		~BitcoinExchange();
 
-		void	printMapElement();
-		float	getBitcoinPriceatDate(InputData *input);
+		float	getBitcoinPriceatDate(const std::string& date, float value);
 };
 
 #endif
