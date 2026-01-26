@@ -27,7 +27,7 @@ class	BitcoinExchange
 		BitcoinExchange& operator=(const BitcoinExchange& other);
 		~BitcoinExchange();
 
-		float	getBitcoinPriceatDate(const std::string& date, float value);
+		bool	getBitcoinPriceatDate(const std::string& date, float value);
 };
 
 #endif

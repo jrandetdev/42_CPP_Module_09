@@ -33,17 +33,22 @@ BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other)
 
 BitcoinExchange::~BitcoinExchange() {}
 
-float	BitcoinExchange::getBitcoinPriceatDate(const std::string& date, float value)
+bool	BitcoinExchange::getBitcoinPriceatDate(const std::string& date, float value)
 {
+	float result;
 	std::map<std::string, float>::iterator it;
-	it = this->historicalData.find(date);
 
 	// upperbound finds the first element strictly greater than the key asked for (lower bound is >= greater or equal to)
 	it = this->historicalData.upper_bound(date);
+	if (it == this->historicalData.end())
+		std::cout << "Date given does not exist in the database, retrieving data in the closest date contained in DB." << std::endl;
+
 	// this is in case the date is earlier but this check should never happen because we did a minyear check
 	if (it == this->historicalData.begin())
-		return (-1.0);
+		return false;
 	// in all cases, it will go back 1. so if our date is missing, then it will give the one right before that one
 	--it;
-	return (it->second * value);
+	result = it->second * value;
+	std::cout << date << " => " << value << " = " << result << std::endl;
+	return true;
 }

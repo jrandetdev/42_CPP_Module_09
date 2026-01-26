@@ -35,7 +35,6 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 	int year, month, day;
 	char firstHyphen, secondHyphen, verticalBar;
 	float value;
-	
 	std::string date;
 
 	while (std::getline(file, line))
@@ -56,8 +55,7 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 		date = line.substr(0, delimPos);
 
 		// Get the price of the amount of bitcoin at that date
-		float result = btcData.getBitcoinPriceatDate(date, value);
-		if (result >= 0) std::cout << date << " => " << value << " = " << result << std::endl;
+		btcData.getBitcoinPriceatDate(date, value);
 	}
 
 	return true;
