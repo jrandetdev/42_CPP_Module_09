@@ -7,7 +7,8 @@ bool	isValidExtension(const std::string& filename, const std::string& extension)
 	size_t dotPos = filename.find_last_of('.');
 	if (filename.substr(dotPos + 1) != extension)
 	{
-		std::cerr << "Error: Invalid file extension. Expected ." << extension << std::endl;
+		std::cerr << RED << "Error: Invalid file extension for " << filename <<
+			". Expected \"." << extension << "\"." << RESET << std::endl;
 		return false;
 	}
 	return true;
@@ -18,7 +19,7 @@ bool	isFileOpen(std::ifstream& file)
 	// Check if file is open (expensive system call, do it once)
 	if (!file.is_open())
 	{
-		std::cerr << "Error: could not open file." << std::endl;
+		std::cerr << RED << "Error: could not open file." << RESET << std::endl;
 		return false;
 	}
 	return true;
@@ -26,9 +27,12 @@ bool	isFileOpen(std::ifstream& file)
 
 bool	isValidFirstLine(std::string& line, const std::string& firstLine)
 {
-	// Check first line is date | value as asked by the subject
+	// Check first line of the files is asked as the subject as asked by the subject
 	if (line != firstLine)
+	{
+		std::cerr << RED << "Error: file needs to start with " << firstLine << RESET << std::endl;
 		return false;
+	}
 	return true;
 }
 
@@ -45,33 +49,20 @@ bool	isValidValue(float value)
 {
 	if (value < 0)
 	{
-		std::cout << "Error: not a positive number." << std::endl;
+		std::cout << RED << "Error: not a positive number." << RESET << std::endl;
 		return false;
 	}
 	else if (value > 1000) 	// Check too large a number
 	{
-		std::cout << "Error: too large a number." << std::endl;
+		std::cout << RED << "Error: too large a number." << RESET << std::endl;
 		return false;
 	}
 	return true;
 }
 
 
-bool	isValidDate(const std::string& date)
+bool	isValidDate(int year, int month, int day)
 {
-	int year, month, day;
-
-	if (date[4] != '-' || date[7] != '-')
-		return false;
-
-	size_t firstPos = date.find('-');
-	size_t secondPos = date.find_last_of('-');
-
-	year = atoi((date.substr(0, firstPos)).c_str());
-	month = atoi((date.substr(firstPos + 1, 2)).c_str());
-	day = atoi((date.substr(secondPos + 1, 2)).c_str());
-
-	// Check year and month are in the right range
 	if (!(MINYEAR <= year && year <= MAXYEAR) ||
 	!(1 <= month && month <= 12) ||
 	!(1 <= day && day <= 31))
