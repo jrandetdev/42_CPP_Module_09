@@ -20,13 +20,12 @@ int	main(int argc, char **argv)
 	return 0;
 }
 
-
 static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcData)
 {
 	std::string 	line;
 	std::ifstream	file(filename.c_str());
 
-	if (!isValidExtension(filename, "txt") || !isFileOpen(file)) return false;
+	if (!isFileOpen(file)) return false;
 	if (file.peek() == EOF) { std::cerr << RED << "Error: File is empty." << RESET << std::endl; return false; }
 	// Check the first line of the file
 	if (!std::getline(file, line) || !isValidFirstLine(line, "date | value")) return false;
