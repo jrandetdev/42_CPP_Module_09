@@ -5,17 +5,24 @@ BitcoinExchange::BitcoinExchange() : historicalData()
 
 BitcoinExchange::BitcoinExchange(const std::string& fileName)
 {
-	std::string date, valueStr;
 	std::string line;
 	std::ifstream fileStream(fileName.c_str());
 	getline(fileStream, line);
+
+	std::string date, valueStr;
+	float value;
 	if (!isValidExtension(fileName, "csv") || !isFileOpen(fileStream) || !isValidFirstLine(line, "date,exchange_rate"))
 		throw std::runtime_error("Error: Invalid file: " + fileName);
-	while (fileStream.peek() != EOF)
+	while (getline(fileStream, line))
 	{
-		std::getline(fileStream, date, ',');
-		std::getline(fileStream, valueStr);
-		float value = getFloat(valueStr);
+		std::stringstream ss(line);
+		if (line.empty())
+			throw std::runtime_error("Error: empty line in csv file");
+
+		size_t delimPos = line.find(',');
+		date = line.substr(0, delimPos);
+		valueStr = line.substr(delimPos + 1, line.npos - delimPos + 1);
+		value = getFloat(valueStr);
 		historicalData.insert(std::pair<std::string,float>(date, value));
 	}
 }
