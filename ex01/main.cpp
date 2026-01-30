@@ -6,8 +6,6 @@
 #include <sstream>
 #include <algorithm>
 
-bool	isValidExpression(const std::string& expression);
-
 int main(int argc, char **argv)
 {
 	if (argc < 2) 
