@@ -6,25 +6,31 @@
 #include <sstream>
 #include <algorithm>
 
+bool	isValidExpression(const std::string& expression);
+
 int main(int argc, char **argv)
 {
-	if (argc != 2) 
+	if (argc < 2) 
 	{
-		std::cout << "Error: program takes one and only one mathematical expression in reverse polish notation." << std::endl;
+		std::cout << "Error: program takes at least one and only one "
+		"mathematical expression in reverse polish notation." << std::endl;
+		return (1);
+	}
+	else if (argc > 2)
+	{
+		std::cout << "Error: program takes not more than one "
+		"mathematical expression in reverse polish notation." << std::endl;
 		return (1);
 	}
 
-	
-	std::string e = argv[1];
-	std::stringstream ss(e);
-	std::string token;
-
-	while (ss >> token)
-	{
-		
+	try {
+		RPN rpn(argv[1]);
 	}
- 
+	catch (std::exception &e )
+	{
+		std::cout << e.what() << std::endl;
+		return 1;
+	}
 	return (0);
 }
 
-std::string 
