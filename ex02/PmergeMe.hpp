@@ -4,6 +4,9 @@
 #include <iostream>
 #include <iomanip>
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+
 
 // so where do I build the vector with ints and the dequeu?
 // probaby in the main directly and then they will be send via reference or pointer 
