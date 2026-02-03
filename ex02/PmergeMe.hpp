@@ -28,7 +28,7 @@ class	Pair
 		// Overload the comparison operators for the pairs <= >= == to compare them
 };
 
-std::ostream& operator<<(std::ostream& out, const Pair& pairInstance);
+std::ostream &operator<<(std::ostream& out, std::vector<int> vecContainer);
 
 
 #endif

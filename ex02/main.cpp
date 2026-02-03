@@ -64,5 +64,7 @@ int main(int argc, char **argv)
 	}
 
 	std::cout << "all good !" << std::endl;
+	// now I need to send my vector container for it to get sorted. 
+	std::cout << vecContainer << std::endl;
 	return 0;
 }
