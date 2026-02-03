@@ -12,7 +12,7 @@
 class	Pair
 {
 	private:
-		// what makes sense to put in private here? in my program, outsid eof my functions, wil i need to construct a pair?
+		Pair(); // no need for the constructor that does not take arguments. 
 	public:
 		unsigned int value;
 		Pair *left;

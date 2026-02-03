@@ -41,14 +41,25 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 		std::stringstream ss(line);
 		if (line.empty()) continue;
 
-		if (!(ss >> year >> firstHyphen >> month >> secondHyphen >> day >> verticalBar >> value) ||
-			firstHyphen != '-' || secondHyphen != '-' || verticalBar != '|' || !isValidDate(year, month, day))
+		if (!(ss >> year >> firstHyphen >> month >> secondHyphen >> day >> verticalBar >> value))
 		{
 			std::cerr << RED << "Error: bad input => " << line << RESET << std::endl; continue;
 		}
 
-		// Check the float value 
-		if (!isValidValue(value)) continue;
+		if (firstHyphen != '-' || secondHyphen != '-' || verticalBar != '|')
+		{
+			std::cerr << "Error: bad separator => " << line << std::endl; continue;
+		}
+
+		try {
+			validateDate(year, month, day);
+			validateValue(value);
+		}
+		catch ( std::exception &e )
+		{
+			std::cerr << e.what() << " => " << line << std::endl;
+			continue;
+		}
 
 		size_t delimPos = line.find(verticalBar);
 		date = line.substr(0, delimPos);

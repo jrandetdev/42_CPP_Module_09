@@ -5,22 +5,27 @@
 #include <iomanip>
 #include <vector>
 #include <deque>
+#include <limits>
+#include <exception>
 
-bool	parseArguments(int argc, char **argv, std::vector<int> &vecContainer)
+
+
+void	validatingArguments(int argc, char **argv, std::vector<int> &vecContainer)
 {
 	int value;
 	for (int i = 1; i < argc; ++i)
 	{
 		std::stringstream ss(argv[i]);
-		if (!(ss >> value) || value < 0)
-		{
-			std::cout << "Error: argument " << argv[i] << " is not a positive integer." << std::endl;
-			return false;
-		}
+		if (!(ss >> value))
+			throw std::runtime_error("Error: argument " + std::string(argv[i]) + " is not a positive integer.");
+		
+		if (value < 0)
+			throw std::runtime_error("Error: argument cannot be negative");
+		
+		if ( INT_MAX > INT_MAX )
+		
 		vecContainer.push_back(value);
-		// dequeContainer.push_back(value);
 	}
-	return true;
 }
 
 int main(int argc, char **argv)
@@ -33,8 +38,14 @@ int main(int argc, char **argv)
 	std::vector<int> vecContainer;
 	// std::deque<int> dequeContainer;
 
-	if (!parseArguments(argc, argv, vecContainer))
-		return 1;
+	try 
+	{
+		validatingArguments(argc, argv, vecContainer);
+	}
+	catch (std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 	std::cout << "all good !" << std::endl;
 	return 0;
 }
