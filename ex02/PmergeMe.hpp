@@ -29,12 +29,11 @@ class	Pair
 		// Overload the comparison operators for the pairs <= >= == to compare them
 };
 
-std::ostream &operator<<(std::ostream& out, std::vector<int> vecContainer);
-
-std::ostream &operator<<(std::ostream& ostream, std::vector<Pair> pairs);
-
 void	mergeInsert(std::vector<int> &initialElementsVec);
-void	groupElementsIntoPairs(const std::vector<int> &initialElementsVec, std::vector<Pair> &pairs);
+void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
+Pair	*groupIntoPairs(std::vector<Pair *> pairs);
+void	_deleteTree(Pair* node);
+void	deleteTree(Pair **nodeRef);
 
 
 #endif

@@ -1,4 +1,5 @@
 #include "PmergeMe.hpp"
+#include "Output.hpp"
 
 #include <sstream>
 #include <iostream>

@@ -1,66 +1,37 @@
 #include "PmergeMe.hpp"
+#include "Output.hpp"
 
 #include <iterator>
-
-//====================== OUTPUT OPERATORS ========================
-
-std::ostream &operator<<(std::ostream& ostream, std::vector<int> vectorContainer)
-{
-	ostream << "Before:	";
-	for (size_t i = 0; i < vectorContainer.size(); ++i)
-	{
-		ostream << vectorContainer[i];
-		if (i < vectorContainer.size() - 1)
-			ostream << " ";
-	}
-
-	return ostream;
-}
-
-//==================== DEBUG OUTPUT TO SEE PAIR ====================
-
-std::ostream &operator<<(std::ostream& ostream, std::vector<Pair> pairs)
-{
-
-	std::vector<Pair>::iterator it;
-
-	for (it = pairs.begin(); it < pairs.end(); ++it)
-	{
-		std::string valStr = std::to_string(it->value);
-		int totalWidth = 11;
-		int padding = (totalWidth - valStr.length()) / 2;
-
-		ostream << '|' << std::setw(2) << it->left; // Left part
-
-		ostream << std::string(padding, ' ') << valStr 
-				<< std::string(totalWidth - padding - valStr.length(), ' ');
-
-		ostream << std::setw(2) << it->right << '|';
-
-		if (it < pairs.end() - 1)
-			ostream << "	";
-	}
-	return ostream;
-}
 
 //======================= PAIR CLASS METHODS =======================
 
 Pair::Pair() : value(0), left(nullptr), right(nullptr) {}
 
-// for the base scenario where we construct only the leaves of the tree 
+/**
+ * @brief Construct a new Pair:: Pair object with only an int value,
+ * the resulting Pair object constructed is a pair with only the value 
+ * and left and right pointing to the null address.
+ */
 Pair::Pair(int value) : value(value), left(nullptr), right(nullptr) {}
 
-// for the recustive method where we need to create a pair made of two pairs
+/**
+ * @brief Construct a new Pair:: Pair object from two pointers to 
+ * Pair objects. If the value contained in the left pair (b) is greater than the 
+ * value contained in the right pair (a), then the pointers are swaped 
+ * and the value contained is the bigger of the two (b)
+ * 
+ * @param a (pointer to a Pair object)
+ * @param b (pointer to a Pair object)
+ */
 Pair::Pair(Pair *a, Pair *b)
 {
 	// by defaulét do something, and else swap could be something I could do
-	if (a->value > b->value)
-	{
-		this->value = a->value;
-		this->left = b;
-		this->right = a;
-	}
-	else
+	this->value = a->value;
+	this->left = b;
+	this->right = a;
+
+	// swap them if b is bigger than a
+	if (b->value > a->value)
 	{
 		this->value = b->value;
 		this->left = a;
@@ -68,27 +39,72 @@ Pair::Pair(Pair *a, Pair *b)
 	}
 }
 
-Pair::~Pair()
-{
-	delete this->left;
-	delete this->right;
-}
+Pair::~Pair() {}
 
 //===================== MERGE INSERTION START ====================
 
+/**
+ * @brief Point of entry of the main sorting algorithm based on the merge insertion sort and 
+ * ford johnson sequence.
+ * 
+ * @param initialElementsVec 
+ * @param pairs
+ * @return void since the output is directly in thr standard output 
+ */
 void	mergeInsert(std::vector<int> &initialElementsVec)
 {
-	std::vector<Pair> pairs;
-	groupElementsIntoPairs(initialElementsVec, pairs);
+	std::vector<Pair *> pairs;
+	
+	intToPair(initialElementsVec, pairs);
 	std::cout << pairs << std::endl;
-
+	Pair *root = groupIntoPairs(pairs);
+	if (root)
+		std::cout << root->value << std::endl;
+	deleteTree(&root);
 }
 
-void	groupElementsIntoPairs(const std::vector<int> &initialElementsVec, std::vector<Pair> &pairs)
+/**
+ * @brief this function creates the leaves of the tree where all the Pair objects contain 
+ * only the value extracted from the input @param initialElementsVec with two nullptr for
+ * the left and right children. This will be the last "floor" of the tree
+ * 
+ * @param initialElementsVec
+ * @param 
+ */
+void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs)
 {
-	// std::vector<int>::iterator initialElementsIt;
 	for (size_t i = 0; i < initialElementsVec.size(); ++i)
+		pairs.push_back(new Pair(initialElementsVec[i]));
+}
+
+Pair	*groupIntoPairs(std::vector<Pair *> pairs)
+{
+	if (pairs.size() <= 1) // just in case hahaha 
 	{
-		pairs.push_back(Pair(initialElementsVec[i]));
+		std::cout << "reached the last level where only one pair is." << std::endl;
+		return pairs[0];
 	}
+	std::vector<Pair *> newSequence;
+	for (size_t i = 0; i < pairs.size(); i += 2)
+	{
+		newSequence.push_back(new Pair(pairs[i], pairs[i + 1]));
+	}
+	std::cout << newSequence << std::endl;
+	return (groupIntoPairs(newSequence));
+}
+
+void	_deleteTree(Pair* node)
+{
+	if (node == NULL) return;
+	_deleteTree(node->left);
+	_deleteTree(node->right);
+
+	std::cout << "Deleting node: " << node->value << std::endl; 
+	delete node;
+}
+
+void	deleteTree(Pair **nodeRef)
+{
+	_deleteTree(*nodeRef);
+	*nodeRef = NULL;
 }

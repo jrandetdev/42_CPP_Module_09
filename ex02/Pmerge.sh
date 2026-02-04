@@ -6,7 +6,7 @@ echo "====== TESTING PARSING ======="
 echo ""
 
 echo "Test 1: valid input"
-./PmergeMe 1 2 3
+./PmergeMe 7 3 8 4
 echo ""
 
 echo "Test 2: invalid sequence with a letter"
