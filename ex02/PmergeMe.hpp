@@ -17,18 +17,24 @@ class	Pair
 	private:
 		Pair(); // no need for the constructor that does not take arguments. 
 	public:
-		unsigned int value;
+		int value;
 		Pair *left;
 		Pair *right;
-		Pair(unsigned int value); // what are the various
+		Pair(int value); // what are the various
 		Pair(Pair *a, Pair *b);
 		Pair(Pair &a, Pair &b);
+		~Pair();
 
 		// I will need to build a pair based on the comparison
 		// Overload the comparison operators for the pairs <= >= == to compare them
 };
 
 std::ostream &operator<<(std::ostream& out, std::vector<int> vecContainer);
+
+std::ostream &operator<<(std::ostream& ostream, std::vector<Pair> pairs);
+
+void	mergeInsert(std::vector<int> &initialElementsVec);
+void	groupElementsIntoPairs(const std::vector<int> &initialElementsVec, std::vector<Pair> &pairs);
 
 
 #endif

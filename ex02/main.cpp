@@ -52,10 +52,10 @@ int main(int argc, char **argv)
 		std::cerr << RED << "Error: please input at least two positive intergers." << RESET << std::endl; // I think I will need more than one to even begin but for now this is it
 		return 1;
 	}
-	std::vector<int> vecContainer;
+	std::vector<int> initialElementsVec;
 	// std::deque<int> dequeContainer;
 	try {
-		validatingArguments(argc, argv, vecContainer);
+		validatingArguments(argc, argv, initialElementsVec);
 	}
 	catch (std::exception &e)
 	{
@@ -65,6 +65,8 @@ int main(int argc, char **argv)
 
 	std::cout << "all good !" << std::endl;
 	// now I need to send my vector container for it to get sorted. 
-	std::cout << vecContainer << std::endl;
+	std::cout << initialElementsVec << std::endl;
+	mergeInsert(initialElementsVec);
+
 	return 0;
 }
