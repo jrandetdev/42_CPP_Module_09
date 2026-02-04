@@ -103,6 +103,7 @@ void	_deleteTree(Pair* node)
 	delete node;
 }
 
+//function to delete the tree
 void	deleteTree(Pair **nodeRef)
 {
 	_deleteTree(*nodeRef);
