@@ -1,18 +1,87 @@
 #include "PmergeMe.hpp"
-#include "Output.hpp"
 
 #include <iterator>
+#include <sstream>
+#include <iostream>
+
+// ==================== OUTPUT OPERATOR SUBJECT ===========================
+
+std::ostream &operator<<(std::ostream& outstream, std::vector<int> vectorContainer)
+{
+	outstream << "Before:	";
+	for (size_t i = 0; i < vectorContainer.size(); ++i)
+	{
+		outstream << vectorContainer[i];
+		if (i < vectorContainer.size() - 1)
+			outstream << " ";
+	}
+	return outstream;
+}
+
+//==================== DEBUG OUTPUT TO SEE PAIR ====================
+
+std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
+{
+	std::vector<Pair *>::iterator it;
+
+	outstream << '\n';
+	for (it = pairs.begin(); it < pairs.end(); ++it)
+	{
+		std::string valStr;
+		std::stringstream ss;
+		ss << ((*it)->value);
+		valStr = ss.str();
+
+		int totalWidth = 11;
+		int padding = (totalWidth - valStr.length()) / 2;
+
+		if ((*it)->left)
+			outstream << '[' << std::setw(2) << (*it)->left; // Left part
+		else
+			outstream << '[' << std::setw(2) << "NULL";
+		outstream << std::string(padding, ' ') << valStr 
+				<< std::string(totalWidth - padding - valStr.length(), ' ');
+
+		if ((*it)->right)
+			outstream << std::setw(2) << (*it)->right << '|';
+		else
+			outstream << std::setw(2) << "NULL" << '|';
+
+		if (it < pairs.end() - 1)
+			outstream << "	";
+	}
+	return outstream;
+}
+
+void printTree(Pair* root, int space, int count)
+{
+    if (root == NULL) return;
+
+    // Increase distance between levels
+    space += count;
+
+    // Process right child first
+    printTree(root->right, space, count);
+
+    // Print current node after space
+    std::cout << std::endl;
+    for (int i = count; i < space; i++) std::cout << " ";
+    std::cout << root->value << "\n";
+
+    // Process left child
+    printTree(root->left, space, count);
+}
 
 //======================= PAIR CLASS METHODS =======================
 
-Pair::Pair() : value(0), left(nullptr), right(nullptr) {}
+Pair::Pair() : value(0), left(NULL), right(NULL) {}
 
 /**
  * @brief Construct a new Pair:: Pair object with only an int value,
  * the resulting Pair object constructed is a pair with only the value 
  * and left and right pointing to the null address.
  */
-Pair::Pair(int value) : value(value), left(nullptr), right(nullptr) {}
+Pair::Pair(int value) : value(value), left(NULL), right(NULL) {}
 
 /**
  * @brief Construct a new Pair:: Pair object from two pointers to 
@@ -25,18 +94,21 @@ Pair::Pair(int value) : value(value), left(nullptr), right(nullptr) {}
  */
 Pair::Pair(Pair *a, Pair *b)
 {
-	// by defaulét do something, and else swap could be something I could do
-	this->value = a->value;
-	this->left = b;
-	this->right = a;
 
-	// swap them if b is bigger than a
-	if (b->value > a->value)
+	// by default I take the one on the right as being the biggest one
+	// avoids unnecessary operations
+	this->value = b->value;
+	this->left = a;
+	this->right = b;
+
+	// swap them if a (one on the right) is bigger than b (ont on the left)
+	if (a->value > b->value)
 	{
-		this->value = b->value;
-		this->left = a;
-		this->right = b;
+		this->value = a->value;
+		this->left = b;
+		this->right = a;
 	}
+	// i will need to perform a check to see if they exist or not
 }
 
 Pair::~Pair() {}
@@ -58,14 +130,15 @@ void	mergeInsert(std::vector<int> &initialElementsVec)
 	intToPair(initialElementsVec, pairs);
 	std::cout << pairs << std::endl;
 	Pair *root = groupIntoPairs(pairs);
-	if (root)
-		std::cout << root->value << std::endl;
+	// if (root)
+	// 	std::cout << root->value << std::endl;
+	printTree(root, 0, 5);
 	deleteTree(&root);
 }
 
 /**
  * @brief this function creates the leaves of the tree where all the Pair objects contain 
- * only the value extracted from the input @param initialElementsVec with two nullptr for
+ * only the value extracted from the input @param initialElementsVec with two NULL for
  * the left and right children. This will be the last "floor" of the tree
  * 
  * @param initialElementsVec
@@ -84,13 +157,30 @@ Pair	*groupIntoPairs(std::vector<Pair *> pairs)
 		std::cout << "reached the last level where only one pair is." << std::endl;
 		return pairs[0];
 	}
+
 	std::vector<Pair *> newSequence;
-	for (size_t i = 0; i < pairs.size(); i += 2)
+	std::vector<Pair *>::iterator it;
+	std::vector<Pair *>::iterator lastElement;
+	// This is to determine the last element since we will be advancing by i += 2 (we need to
+	// stop before in order not to segfault
+	pairs.size() % 2 ? lastElement = pairs.end() - 1 : lastElement = pairs.end();
+	for (it = pairs.begin(); it != lastElement; it += 2)
 	{
-		newSequence.push_back(new Pair(pairs[i], pairs[i + 1]));
+		newSequence.push_back(new Pair(*it, *(it + 1)));
 	}
-	std::cout << newSequence << std::endl;
-	return (groupIntoPairs(newSequence));
+	if (lastElement != pairs.end())
+	{
+		std::cout << "entered the case of the uneven sequence" << std::endl;
+		newSequence.push_back(new Pair(NULL, *lastElement));
+	}
+	// for (size_t i = 0; i < pairs.size(); i += 2)
+	// {
+	// 	std::cout << "building a floor..." << std::endl;
+
+	// 	newSequence.push_back(new Pair(pairs[i], pairs[i + 1]));
+	// }
+	return (groupIntoPairs(newSequence)); // call back group into pairs, if there is an odd amount of pair
+	// then it is just not grouped into pairs
 }
 
 void	_deleteTree(Pair* node)

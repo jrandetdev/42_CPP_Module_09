@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <iomanip>
+#include <vector>
+#include <deque>
+#include <cstdlib>
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -10,7 +13,6 @@
 
 // so where do I build the vector with ints and the dequeu?
 // probaby in the main directly and then they will be send via reference or pointer 
-
 
 class	Pair
 {
@@ -34,6 +36,12 @@ void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &
 Pair	*groupIntoPairs(std::vector<Pair *> pairs);
 void	_deleteTree(Pair* node);
 void	deleteTree(Pair **nodeRef);
+
+
+std::ostream &operator<<(std::ostream& outstream, std::vector<int> vecContainer);
+std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs);
+void printTree(Pair* root, int space, int count);
+
 
 
 #endif
