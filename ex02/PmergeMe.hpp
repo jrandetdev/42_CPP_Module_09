@@ -9,6 +9,7 @@
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
+#define GREY    "\033[1;30m"
 
 
 // so where do I build the vector with ints and the dequeu?
