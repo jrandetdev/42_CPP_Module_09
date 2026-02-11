@@ -104,9 +104,8 @@ void	mergeInsert(std::vector<int> &initialElementsVec)
 	
 	intToPair(initialElementsVec, pairs);
 	std::cout << pairs << std::endl;
-	Pair *root = groupIntoPairs(pairs);
+	groupIntoPairs(pairs);
 	//printTree(root, 0, 5);
-	deleteTree(&root);
 }
 
 void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs)
@@ -115,15 +114,9 @@ void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &
 		pairs.push_back(new Pair(initialElementsVec[i]));
 }
 
-Pair	*groupIntoPairs(std::vector<Pair *> pairs)
+void groupIntoPairs(std::vector<Pair *> pairs)
 {
-	if (pairs.size() <= 1) // just in case hahaha 
-	{
-		std::cout << "reached the last level where only one pair is." << std::endl;
-		return pairs[0];
-	}
-
-	std::vector<Pair *> newSequence;
+	std::vector<Pair *> treeFloor;
 	std::vector<Pair *>::iterator it;
 	std::vector<Pair *>::iterator lastElement;
 
@@ -133,16 +126,21 @@ Pair	*groupIntoPairs(std::vector<Pair *> pairs)
 		lastElement = pairs.end() - 1;
 
 	for (it = pairs.begin(); it != lastElement; it += 2)
-	{
-		newSequence.push_back(new Pair(*it, *(it + 1)));
-	}
-	if (lastElement != pairs.end())
-	{
-		newSequence.push_back(new Pair(NULL, *lastElement));
-	}
+		treeFloor.push_back(new Pair(*it, *(it + 1)));
 
-	std::cout << newSequence << std::endl;
-	return (groupIntoPairs(newSequence)); // call back group into pairs, if there is an odd amount of pair
+	if (lastElement != pairs.end())
+		treeFloor.push_back(new Pair(NULL, *lastElement));
+
+	std::cout << treeFloor << std::endl;
+	if (pairs.size() > 1)
+		return (groupIntoPairs(treeFloor));
+	sortTree(treeFloor);
+}
+
+void	sortTree(std::vector<Pair *> pairs)
+{
+	std::cout << "inside the sortTree we get the root node of the tree" << pairs << std::endl;
+	deleteTree(&pairs[0]);
 }
 
 void	_deleteTree(Pair* node)
@@ -150,8 +148,6 @@ void	_deleteTree(Pair* node)
 	if (node == NULL) return;
 	_deleteTree(node->left);
 	_deleteTree(node->right);
-
-	//std::cout << "Deleting node: " << node->value << std::endl; 
 	delete node;
 }
 

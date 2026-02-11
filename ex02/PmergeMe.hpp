@@ -34,7 +34,8 @@ class	Pair
 
 void	mergeInsert(std::vector<int> &initialElementsVec);
 void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
-Pair	*groupIntoPairs(std::vector<Pair *> pairs);
+void 	groupIntoPairs(std::vector<Pair *> pairs);
+void	sortTree(std::vector<Pair *> pairs);
 void	_deleteTree(Pair* node);
 void	deleteTree(Pair **nodeRef);
 
