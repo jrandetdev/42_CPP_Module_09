@@ -8,7 +8,7 @@
 
 std::ostream &operator<<(std::ostream& outstream, std::vector<int> vectorContainer)
 {
-	outstream << "Before:	";
+	//outstream << "Before:	";
 	for (size_t i = 0; i < vectorContainer.size(); ++i)
 	{
 		outstream << vectorContainer[i];
@@ -20,52 +20,67 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<int> vectorContain
 
 //==================== DEBUG OUTPUT TO SEE PAIR ====================
 
-std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
-{
-	std::vector<Pair *>::iterator it;
-
-	outstream << '\n';
-	for (it = pairs.begin(); it < pairs.end(); ++it)
-	{
-		std::string valStr;
-		std::stringstream ss;
-		ss << ((*it)->value);
-		valStr = ss.str();
-
-		if ((*it)->left)
-			outstream << '[' << GREY << (*it)->left->value << RESET; // Left part
-		else
-			outstream << '[' << GREY << "NULL" << RESET;
-		outstream << " " << valStr << " ";
-		if ((*it)->right)
-			outstream << GREY << (*it)->right->value << ']' << RESET;
-		else
-			outstream << GREY << "NULL" << ']' << RESET;
-
-		if (it < pairs.end() - 1)
-			outstream << "	";
-	}
-	return outstream;
-}
-
-// void printTree(Pair* root, int space, int count)
+// std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
 // {
-//     if (root == NULL) return;
+// 	std::vector<Pair *>::iterator it;
 
-//     // Increase distance between levels
-//     space += count;
+// 	outstream << '\n';
+// 	for (it = pairs.begin(); it < pairs.end(); ++it)
+// 	{
+// 		std::string valStr;
+// 		std::stringstream ss;
+// 		ss << ((*it)->value);
+// 		valStr = ss.str();
 
-//     // Process right child first
-//     printTree(root->right, space, count);
+// 		if ((*it)->left)
+// 			outstream << '[' << GREY << "S " << (*it)->left->value << RESET; // Left part
+// 		else
+// 			outstream << '[' << GREY << "S " << "NULL" << RESET;
+// 		outstream << " " << valStr << " ";
+// 		if ((*it)->right)
+// 			outstream << GREY << "B: " << (*it)->right->value << ']' << RESET;
+// 		else
+// 			outstream << GREY << "B: " << "NULL" << ']' << RESET;
 
-//     // Print current node after space
-//     std::cout << std::endl;
-//     for (int i = count; i < space; i++) std::cout << " ";
-//     std::cout << root->value << "\n";
-
-//     // Process left child
-//     printTree(root->left, space, count);
+// 		if (it < pairs.end() - 1)
+// 			outstream << "	";
+// 	}
+// 	return outstream;
 // }
+
+
+void printTree(Pair* root, std::string indent, bool isLeft)
+{
+	if (root == NULL)
+    {
+        std::cout << indent << (isLeft ? "└── " : "┌── ") << RED << "NULL" << RESET << std::endl;
+        return;
+    }
+
+    if (root->right || root->left)
+	{
+        if (root->right)
+            printTree(root->right, indent + (isLeft ? "│   " : "    "), false);
+        else
+            std::cout << indent << (isLeft ? "│   " : "    ") << "┌── " << RED << "X" << RESET << std::endl;
+    }
+
+    std::cout << indent;
+    if (isLeft)
+        std::cout << "└── ";
+    else
+        std::cout << "┌── ";
+    
+    std::cout << "[" << root->value << "]" << std::endl;
+
+    if (root->left || root->right)
+    {
+        if (root->left)
+            printTree(root->left, indent + (isLeft ? "    " : "│   "), true);
+        else
+            std::cout << indent << (isLeft ? "    " : "│   ") << "└── " << RED << "X" << RESET << std::endl;
+    }
+}
 
 //======================= PAIR CLASS METHODS =======================
 
@@ -73,19 +88,10 @@ Pair::Pair() : value(0), left(NULL), right(NULL) {}
 
 Pair::Pair(int value) : value(value), left(NULL), right(NULL) {}
 
-Pair::Pair(Pair *a, Pair *b)
+Pair::Pair(Pair *a, Pair *b) : value(b->value), left(a), right(b)
 {
-	if (!a)
-	{
-		this->value = b->value;
-		this->left = NULL;
-		this->right = b;
+	if (!a || !b)
 		return;
-	}
-	this->value = b->value;
-	this->left = a;
-	this->right = b;
-
 	if (a->value > b->value)
 	{
 		this->value = a->value;
@@ -101,11 +107,10 @@ Pair::~Pair() {}
 void	mergeInsert(std::vector<int> &initialElementsVec)
 {
 	std::vector<Pair *> pairs;
+	Pair *root;
 	
 	intToPair(initialElementsVec, pairs);
-	std::cout << pairs << std::endl;
-	groupIntoPairs(pairs);
-	//printTree(root, 0, 5);
+	groupIntoPairs(initialElementsVec);
 }
 
 void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs)
@@ -114,11 +119,17 @@ void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &
 		pairs.push_back(new Pair(initialElementsVec[i]));
 }
 
-void groupIntoPairs(std::vector<Pair *> pairs)
+Pair *groupIntoPairs(std::vector<Pair *> pairs)
 {
 	std::vector<Pair *> treeFloor;
 	std::vector<Pair *>::iterator it;
 	std::vector<Pair *>::iterator lastElement;
+
+	if (pairs.size() == 1)
+	{
+		std::cout << GREEN << "\nthe top of my recursion tree" << RESET << std::endl;
+		return (pairs[0]);
+	}
 
 	if ((pairs.size() % 2) == 0)
 		lastElement = pairs.end();
@@ -131,16 +142,24 @@ void groupIntoPairs(std::vector<Pair *> pairs)
 	if (lastElement != pairs.end())
 		treeFloor.push_back(new Pair(NULL, *lastElement));
 
-	std::cout << treeFloor << std::endl;
-	if (pairs.size() > 1)
-		return (groupIntoPairs(treeFloor));
-	sortTree(treeFloor);
+	return (groupIntoPairs(treeFloor));
 }
 
-void	sortTree(std::vector<Pair *> pairs)
+void	sortTree(Pair *root)
 {
-	std::cout << "inside the sortTree we get the root node of the tree" << pairs << std::endl;
-	deleteTree(&pairs[0]);
+	std::vector<int> result;
+	std::vector<Pair *>::iterator it;
+
+	(void)root;
+	// Build the result or main chain with the winners of the case
+	for (it = pairs.begin(); it != pairs.end(); ++it)
+		result.push_back((*it)->right->value);
+
+	// if (pairs[0]->left)
+	// 	result.insert(pairs.begin(), pairs[0]->left->value);
+
+	// std::cout << result << std::endl;
+
 }
 
 void	_deleteTree(Pair* node)

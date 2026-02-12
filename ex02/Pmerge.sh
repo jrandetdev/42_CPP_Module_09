@@ -6,7 +6,7 @@ echo "====== TESTING PARSING ======="
 echo ""
 
 echo "Test 1: valid input"
-./PmergeMe 5 18 10 16 9 4 1 2 6 17 11 19 7 21 14 8 3 12 13 20
+./PmergeMe 5 18 10 16 9 4 1 2 6 17 11 19 7 21 14 8 3 12 13 20 15
 echo ""
 
 #5 18 10 16 9 4 1 2 6 17 11 19 7 21 14 8 3 12 13 20

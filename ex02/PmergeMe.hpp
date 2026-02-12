@@ -7,9 +7,11 @@
 #include <deque>
 #include <cstdlib>
 
-#define RESET   "\033[0m"
-#define RED     "\033[31m"
-#define GREY    "\033[1;30m"
+#define RED     "\033[31m"      /* Red */
+#define GREEN   "\033[32m"      /* Green */
+#define BLUE    "\033[34m"      /* Blue */
+#define RESET   "\033[0m"		/* Reset */
+#define MAG		"\033[35m"
 
 
 // so where do I build the vector with ints and the dequeu?
@@ -34,15 +36,16 @@ class	Pair
 
 void	mergeInsert(std::vector<int> &initialElementsVec);
 void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
-void 	groupIntoPairs(std::vector<Pair *> pairs);
-void	sortTree(std::vector<Pair *> pairs);
+Pair	*groupIntoPairs(std::vector<Pair *> pairs);
+void	sortTree(Pair *root);
 void	_deleteTree(Pair* node);
 void	deleteTree(Pair **nodeRef);
 
 
 std::ostream &operator<<(std::ostream& outstream, std::vector<int> vecContainer);
 std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs);
-void printTree(Pair* root, int space, int count);
+void printTree(Pair* root, std::string indent = "", bool isLeft = true);
+
 
 
 
