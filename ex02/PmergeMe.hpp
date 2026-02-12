@@ -36,10 +36,10 @@ class	Pair
 
 void	mergeInsert(std::vector<int> &initialElementsVec);
 void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
-Pair	*groupIntoPairs(std::vector<Pair *> pairs);
-void	sortTree(Pair *root);
-void	_deleteTree(Pair* node);
-void	deleteTree(Pair **nodeRef);
+std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs);
+std::vector<Pair *>	sortTree(std::vector<Pair *> pairs);
+// void	_deleteTree(Pair* node);
+// void	deleteTree(Pair **nodeRef);
 
 
 std::ostream &operator<<(std::ostream& outstream, std::vector<int> vecContainer);
