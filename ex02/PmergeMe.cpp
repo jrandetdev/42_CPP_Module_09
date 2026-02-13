@@ -3,12 +3,17 @@
 #include <iterator>
 #include <sstream>
 #include <iostream>
+#include <cmath>
+
+unsigned int pairCompCounter = 0;
+unsigned int insertCompCounter = 0;
 
 // ==================== OUTPUT OPERATOR SUBJECT ===========================
 
 std::ostream &operator<<(std::ostream& outstream, std::vector<int> vectorContainer)
 {
 	//outstream << "Before:	";
+	outstream << '\n';
 	for (size_t i = 0; i < vectorContainer.size(); ++i)
 	{
 		outstream << vectorContainer[i];
@@ -99,6 +104,7 @@ Pair::Pair(Pair *a, Pair *b) : value(b->value), left(a), right(b)
 		this->value = a->value;
 		this->left = b;
 		this->right = a;
+		pairCompCounter++;
 	}
 }
 
@@ -108,9 +114,12 @@ Pair::~Pair() {}
 
 void	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToInsert)
 {
+	// scenario where I receive NULL, that there is nothing to insert (end of the tree)
 	if (!elementToInsert)
 		return ;
-	std::vector<Pair *>::iterator low = resultVector.begin();
+	
+	// using vectors for the insert method, difference betweeen two vectors is a size_t
+	std::vector<Pair *>::iterator low = resultVector.begin();	// iterators 
 	std::vector<Pair *>::iterator high = resultVector.end();
 	size_t difference;
 
@@ -120,11 +129,17 @@ void	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToIns
 		//std::cout << difference << std::endl;
 		std::vector<Pair*>::iterator mid = low + difference / 2;
 		if (elementToInsert->value >= (*mid)->value)
-			low = mid + 1;
+		{
+			low = mid + 1;	// kept the mid + 1 because for insert we use [ ( and so we need to manually exclude [
+			insertCompCounter++;
+		}
 		else
-			high = mid;
+		{
+			high = mid; //originally I had added a - 1 but not necessary since insert woks with the [ (, where ( excludes
+			insertCompCounter++;
+		}
 	}
-	resultVector.insert(low, elementToInsert);
+	resultVector.insert(low, elementToInsert); // all elements are shifted right to make space for it
 }
 
 std::vector<Pair *>	sortTree(std::vector<Pair *> pairs)
@@ -135,20 +150,32 @@ std::vector<Pair *>	sortTree(std::vector<Pair *> pairs)
 	for (size_t i = 0; i < pairs.size(); ++i)
 		result.push_back(pairs[i]->right);
 
+	bool freeElementInserted = false;
 	// free element to insert
 	if (pairs[0]->left)
+	{
 		result.insert(result.begin(), pairs[0]->left);
+		freeElementInserted = true;
+	}
 
 	std::vector<Pair *> smaller;
+	std::vector<size_t> upperlimit;
 	for (size_t i = 1; i < pairs.size(); ++i)
+	{
 		smaller.push_back(pairs[i]->left);
+		freeElementInserted ? upperlimit.push_back(i) : upperlimit.push_back(i - 1);
+	}
 
-	std::cout << "\n\n\nresult: " << result << std::endl;
+	std::cout << "\nresult: " << result << std::endl;
 	std::cout << "\nsmaller: " << smaller << std::endl;
+	std::cout << "\nupperlimitarray: " << upperlimit << std::endl;
 
-	std::vector<Pair *>::iterator it;
-	for (it = smaller.begin(); it != smaller.end(); ++it)
-		insertElementInResult(result, *it);
+	// Loop through the smaller array and send the element to insert inside the result vector
+	// std::vector<Pair *>::iterator it;
+	for (size_t i = upperlimit[0]; i = 1 ? i <= smaller.size() : i < smaller.size() - 1; ++i)
+	{
+		insertElementInResult(result, smaller[i], upperlimit[i]);
+	}
 	
 	std::cout << "\nafter insert sort, result: " << result << std::endl;
 
@@ -190,6 +217,16 @@ void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &
 		pairs.push_back(new Pair(initialElementsVec[i]));
 }
 
+int idealComparisonNumber(int n)
+{
+	int sum = 0;
+	for (int k = 1; k <= n; ++k) {
+		double value = (3.0 / 4.0) * k;
+		sum += static_cast<int>(std::ceil(std::log2(value)));
+	}
+	return sum;
+}
+
 void	mergeInsert(std::vector<int> &initialElementsVec)
 {
 	std::vector<Pair *> pairs;
@@ -198,6 +235,13 @@ void	mergeInsert(std::vector<int> &initialElementsVec)
 	intToPair(initialElementsVec, pairs);
 	dummy = groupIntoPairs(pairs);
 	sortTree(dummy);
+	std::cout << "Comparisons made during pair making: " << pairCompCounter 
+				<< " and comparisons made during insertion " << insertCompCounter
+				<< " and total: " << pairCompCounter + insertCompCounter << std::endl;
+
+	std::cout << "Ideal number of comparisons for " << initialElementsVec.size()
+				<< " is " << idealComparisonNumber(initialElementsVec.size())
+				<< std::endl;
 }
 
 
