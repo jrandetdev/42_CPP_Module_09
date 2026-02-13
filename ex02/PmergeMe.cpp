@@ -27,23 +27,25 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
 	outstream << '\n';
 	for (it = pairs.begin(); it < pairs.end(); ++it)
 	{
-		std::string valStr;
-		std::stringstream ss;
-		ss << ((*it)->value);
-		valStr = ss.str();
+		if (!(*it))
+		{
+			std::cout << "NULL";
+			continue;
+		}
 
 		if ((*it)->left)
-			outstream << '[' << MAG << "S " << (*it)->left->value << RESET; // Left part
+			outstream << '[' << MAG << (*it)->left->value << RESET; // Left part
 		else
-			outstream << '[' << MAG << "S " << "NULL" << RESET;
-		outstream << " " << valStr << " ";
+			outstream << '[' << MAG << "X" << RESET;
+
+		outstream << " " << (*it)->value << " ";
 		if ((*it)->right)
-			outstream << MAG << "B: " << (*it)->right->value << ']' << RESET;
+			outstream << MAG << (*it)->right->value << RESET << ']';
 		else
-			outstream << MAG << "B: " << "NULL" << ']' << RESET;
+			outstream << MAG << "X" << RESET << ']';
 
 		if (it < pairs.end() - 1)
-			outstream << "	";
+			outstream << " ";
 	}
 	return outstream;
 }
@@ -52,34 +54,34 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
 void printTree(Pair* root, std::string indent, bool isLeft)
 {
 	if (root == NULL)
-    {
-        std::cout << indent << (isLeft ? "└── " : "┌── ") << RED << "NULL" << RESET << std::endl;
-        return;
-    }
-
-    if (root->right || root->left)
 	{
-        if (root->right)
-            printTree(root->right, indent + (isLeft ? "│   " : "    "), false);
-        else
-            std::cout << indent << (isLeft ? "│   " : "    ") << "┌── " << RED << "X" << RESET << std::endl;
-    }
+		std::cout << indent << (isLeft ? "└── " : "┌── ") << RED << "NULL" << RESET << std::endl;
+		return;
+	}
 
-    std::cout << indent;
-    if (isLeft)
-        std::cout << "└── ";
-    else
-        std::cout << "┌── ";
-    
-    std::cout << "[" << root->value << "]" << std::endl;
+	if (root->right || root->left)
+	{
+		if (root->right)
+			printTree(root->right, indent + (isLeft ? "│   " : "    "), false);
+		else
+			std::cout << indent << (isLeft ? "│   " : "    ") << "┌── " << RED << "X" << RESET << std::endl;
+	}
 
-    if (root->left || root->right)
-    {
-        if (root->left)
-            printTree(root->left, indent + (isLeft ? "    " : "│   "), true);
-        else
-            std::cout << indent << (isLeft ? "    " : "│   ") << "└── " << RED << "X" << RESET << std::endl;
-    }
+	std::cout << indent;
+	if (isLeft)
+		std::cout << "└── ";
+	else
+		std::cout << "┌── ";
+	
+	std::cout << "[" << root->value << "]" << std::endl;
+
+	if (root->left || root->right)
+	{
+		if (root->left)
+			printTree(root->left, indent + (isLeft ? "    " : "│   "), true);
+		else
+			std::cout << indent << (isLeft ? "    " : "│   ") << "└── " << RED << "X" << RESET << std::endl;
+	}
 }
 
 //======================= PAIR CLASS METHODS =======================
@@ -106,7 +108,23 @@ Pair::~Pair() {}
 
 void	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToInsert)
 {
-	resultVector.push_back(elementToInsert);
+	if (!elementToInsert)
+		return ;
+	std::vector<Pair *>::iterator low = resultVector.begin();
+	std::vector<Pair *>::iterator high = resultVector.end();
+	size_t difference;
+
+	while (low < high)
+	{
+		difference = high - low;
+		//std::cout << difference << std::endl;
+		std::vector<Pair*>::iterator mid = low + difference / 2;
+		if (elementToInsert->value >= (*mid)->value)
+			low = mid + 1;
+		else
+			high = mid;
+	}
+	resultVector.insert(low, elementToInsert);
 }
 
 std::vector<Pair *>	sortTree(std::vector<Pair *> pairs)
@@ -114,32 +132,26 @@ std::vector<Pair *>	sortTree(std::vector<Pair *> pairs)
 	if (pairs[0]->right == NULL)
 		return pairs;
 	std::vector<Pair *> result;
-	std::cout << "entered the sort tree function" << std::endl;
-	std::cout << pairs << std::endl;
-
-	// add back des grands
-	std::cout << "inside the sortTree function" << std::endl;
 	for (size_t i = 0; i < pairs.size(); ++i)
 		result.push_back(pairs[i]->right);
 
 	// free element to insert
 	if (pairs[0]->left)
 		result.insert(result.begin(), pairs[0]->left);
-	else
-		std::cout << "no free pair to insert :(" << std::endl;
-
 
 	std::vector<Pair *> smaller;
 	for (size_t i = 1; i < pairs.size(); ++i)
 		smaller.push_back(pairs[i]->left);
 
-	std::cout << "Main chain: " << result << std::endl;
-	std::cout << "smaller: " << smaller << std::endl;
+	std::cout << "\n\n\nresult: " << result << std::endl;
+	std::cout << "\nsmaller: " << smaller << std::endl;
 
-	for (size_t i = 1; i < smaller.size(); ++i)
-	{
-		insertElementInResult(result, smaller[i]);
-	}
+	std::vector<Pair *>::iterator it;
+	for (it = smaller.begin(); it != smaller.end(); ++it)
+		insertElementInResult(result, *it);
+	
+	std::cout << "\nafter insert sort, result: " << result << std::endl;
+
 	return (sortTree(result));
 	// for each pair within the tree, push back the child ont he right in the result vector 
 
