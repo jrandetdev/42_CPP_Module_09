@@ -14,12 +14,12 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
 {
 	std::vector<Pair *>::iterator it;
 
-	outstream << '\n';
+	//outstream << '\n';
 	for (it = pairs.begin(); it < pairs.end(); ++it)
 	{
 		if (!(*it))
 		{
-			std::cout << "NULL";
+			std::cout << " NULL ";
 			continue;
 		}
 
@@ -102,7 +102,7 @@ void	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToIns
 	// scenario where I receive NULL, that there is nothing to insert (end of the tree)
 	if (!elementToInsert)
 	{
-		std::cout << "entered the condition here" << std::endl;
+		std::cout << "\nOne of the element was NULL, we did not insert it" << std::endl;
 		return ;
 	}
 	// using vectors for the insert method, difference betweeen two vectors is a size_t
@@ -113,61 +113,72 @@ void	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToIns
 	while (low < high)
 	{
 		difference = high - low;
-		//std::cout << difference << std::endl;
 		std::vector<Pair*>::iterator mid = low + difference / 2;
 		if (elementToInsert->value >= (*mid)->value)
 		{
-			low = mid + 1;	// kept the mid + 1 because for insert we use [ ( and so we need to manually exclude [
+			low = mid + 1;
 			insertCompCounter++;
 		}
 		else
 		{
-			high = mid; //originally I had added a - 1 but not necessary since insert woks with the [ (, where ( excludes
+			high = mid;
 			insertCompCounter++;
 		}
 	}
-	resultVector.insert(low, elementToInsert); // all elements are shifted right to make space for it
+	resultVector.insert(low, elementToInsert);
 }
 
 std::vector<Pair *>	sortTree(std::vector<Pair *> pairs)
 {
 	if (pairs[0]->right == NULL)
-		return pairs;
+		return pairs;						// end of recursion if the child on right is NULL
 
 	std::vector<Pair *> result;
 	for (size_t i = 0; i < pairs.size(); ++i)
 		result.push_back(pairs[i]->right);
 
-	//bool freeElementInserted = false;
+	bool freeElementInserted = false;
 	// free element to insert
-	std::cout << "entered the sortTree function" << std::endl;
 	if (pairs[0]->left)
 	{
 		result.insert(result.begin(), pairs[0]->left);
-	//	freeElementInserted = true;
-		std::cout << "\nfree element inserted : " << pairs[0]->left->value << std::endl;
+		freeElementInserted = true;
+		std::cout << "\n\n\nfree element inserted : " << pairs[0]->left->value << std::endl;
 	}
 	else
 	{
-		std::cout << "\nno free member was inserted because it is NULL" << std::endl;
+		std::cout << "\n\n\nno free member was inserted because it is NULL" << std::endl;
 	}
-	
-	std::cout << "\nresult: " << result << std::endl;
+
+	std::cout << "\nresult: (before the insertion sort): " << result << std::endl;
 
 	std::vector<Pair *> smaller;
 	//std::vector<size_t> upperlimit;
-	for (size_t i = 1; i < pairs.size(); ++i)
+	for (size_t i = 1; i < pairs.size(); ++i) // This is correct, even if we have one on the left 
 	{
 		smaller.push_back(pairs[i]->left);
 	}
 
-	std::cout << "\nsmaller array : " << smaller << std::endl;
+
+	std::cout << "\nsmaller elements to be inserted in result: " << smaller << std::endl;
+
+
 
 	for (size_t i = 0; i < smaller.size(); ++i)
 	{
 		insertElementInResult(result, smaller[i]);
 	}
-	
+
+	std::vector<size_t> upperLimit;
+	size_t i;
+	freeElementInserted ? i = 2 : i = 1;
+	for (size_t j = 0; j < smaller.size(); ++j)
+	{
+		upperLimit.push_back(i);
+		++i;
+	}
+	std::cout << "upperlimit array: " << upperLimit << std::endl;
+
 	std::cout << "\nafter insert sort, result: " << result << std::endl;
 
 	return (sortTree(result));

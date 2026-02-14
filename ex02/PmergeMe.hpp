@@ -23,10 +23,10 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<T> &vectorContaine
 		return outstream;
 	}
 	//outstream << "Before:	";
-	outstream << '\n';
+	//outstream << '\n';
 	for (size_t i = 0; i < vectorContainer.size(); ++i)
 	{
-		outstream << vectorContainer[i];
+		outstream << "[ " << vectorContainer[i] << " ]";
 		if (i < vectorContainer.size() - 1)
 			outstream << " ";
 	}
