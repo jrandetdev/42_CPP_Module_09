@@ -53,8 +53,8 @@ class	Pair
 		// Overload the comparison operators for the pairs <= >= == to compare them
 };
 
-void	mergeInsert(std::vector<int> &initialElementsVec);
-void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
+std::vector<int> mergeInsert(std::vector<int> &initialElementsVec);
+void	intToPairs(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
 std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs);
 std::vector<Pair *>	sortTree(std::vector<Pair *> pairs);
 // void	_deleteTree(Pair* node);

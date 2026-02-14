@@ -84,12 +84,12 @@ Pair::Pair(Pair *a, Pair *b) : value(b->value), left(a), right(b)
 {
 	if (!a || !b)
 		return;
+	pairCompCounter++;
 	if (a->value > b->value)
 	{
 		this->value = a->value;
 		this->left = b;
 		this->right = a;
-		pairCompCounter++;
 	}
 }
 
@@ -97,17 +97,19 @@ Pair::~Pair() {}
 
 //===================== MERGE INSERTION START ====================
 
-void	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToInsert)
+void	updateUpperLimits(std::vector<size_t> &upperlimit, size_t insertionPoint)
 {
-	// scenario where I receive NULL, that there is nothing to insert (end of the tree)
-	if (!elementToInsert)
+	for (size_t i = 0; i < upperlimit.size(); ++i)
 	{
-		std::cout << "\nOne of the element was NULL, we did not insert it" << std::endl;
-		return ;
+		if (upperlimit[i] >= insertionPoint)
+		upperlimit[i]++;
 	}
-	// using vectors for the insert method, difference betweeen two vectors is a size_t
+}
+
+size_t	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToInsert, size_t upperLimit)
+{
 	std::vector<Pair *>::iterator low = resultVector.begin();	// iterators 
-	std::vector<Pair *>::iterator high = resultVector.end();
+	std::vector<Pair *>::iterator high = resultVector.begin() + upperLimit;
 	size_t difference;
 
 	while (low < high)
@@ -126,19 +128,21 @@ void	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToIns
 		}
 	}
 	resultVector.insert(low, elementToInsert);
+	return (low - resultVector.begin());
 }
 
 std::vector<Pair *>	sortTree(std::vector<Pair *> pairs)
 {
+	// END OF THE RECURSION
 	if (pairs[0]->right == NULL)
-		return pairs;						// end of recursion if the child on right is NULL
+		return pairs;
 
+	// BUILDING THE RESULT VECTOR
 	std::vector<Pair *> result;
 	for (size_t i = 0; i < pairs.size(); ++i)
 		result.push_back(pairs[i]->right);
 
 	bool freeElementInserted = false;
-	// free element to insert
 	if (pairs[0]->left)
 	{
 		result.insert(result.begin(), pairs[0]->left);
@@ -152,23 +156,16 @@ std::vector<Pair *>	sortTree(std::vector<Pair *> pairs)
 
 	std::cout << "\nresult: (before the insertion sort): " << result << std::endl;
 
+
+	// BUILDING THE SMALLER TO INSERT VECTOR
 	std::vector<Pair *> smaller;
-	//std::vector<size_t> upperlimit;
-	for (size_t i = 1; i < pairs.size(); ++i) // This is correct, even if we have one on the left 
+	for (size_t i = 1; i < pairs.size(); ++i)
 	{
 		smaller.push_back(pairs[i]->left);
 	}
-
-
 	std::cout << "\nsmaller elements to be inserted in result: " << smaller << std::endl;
 
-
-
-	for (size_t i = 0; i < smaller.size(); ++i)
-	{
-		insertElementInResult(result, smaller[i]);
-	}
-
+	// BUILDING THE UPPERLIMIT VECTOR
 	std::vector<size_t> upperLimit;
 	size_t i;
 	freeElementInserted ? i = 2 : i = 1;
@@ -179,11 +176,21 @@ std::vector<Pair *>	sortTree(std::vector<Pair *> pairs)
 	}
 	std::cout << "upperlimit array: " << upperLimit << std::endl;
 
+	// INSERTING THE ELEMENTS AND UPDATING UPPERLIMIT
+	size_t insertionPoint;
+	for (size_t i = 0; i < smaller.size(); ++i)
+	{
+		if (smaller[i])
+		{
+			insertionPoint = insertElementInResult(result, smaller[i], upperLimit[i]);
+
+			// after insertion, the indexes in result have shifted. So I need to +1 to all the indices after the insertingposition
+			updateUpperLimits(upperLimit, insertionPoint);
+		}
+	}
+
 	std::cout << "\nafter insert sort, result: " << result << std::endl;
-
 	return (sortTree(result));
-	// for each pair within the tree, push back the child ont he right in the result vector 
-
 }
 
 std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs)
@@ -213,7 +220,16 @@ std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs)
 	return (groupIntoPairs(treeFloor));
 }
 
-void	intToPair(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs)
+std::vector<int> pairsToInt(const std::vector<Pair *> pairs)
+{
+	std::vector<int> intResult;
+	std::vector<Pair *>::const_iterator it;
+	for (it = pairs.begin(); it < pairs.end(); ++it)
+		intResult.push_back((*it)->value);
+	return (intResult);
+}
+
+void	intToPairs(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs)
 {
 	for (size_t i = 0; i < initialElementsVec.size(); ++i)
 		pairs.push_back(new Pair(initialElementsVec[i]));
@@ -229,14 +245,15 @@ int idealComparisonNumber(int n)
 	return sum;
 }
 
-void	mergeInsert(std::vector<int> &initialElementsVec)
+std::vector<int> mergeInsert(std::vector<int> &initialElementsVec)
 {
 	std::vector<Pair *> pairs;
 	std::vector<Pair *> dummy;
+	std::vector<Pair *> result;
 	
-	intToPair(initialElementsVec, pairs);
+	intToPairs(initialElementsVec, pairs);
 	dummy = groupIntoPairs(pairs);
-	sortTree(dummy);
+	result = sortTree(dummy);
 	std::cout << "Comparisons made during pair making: " << pairCompCounter 
 				<< " and comparisons made during insertion " << insertCompCounter
 				<< " and total: " << pairCompCounter + insertCompCounter << std::endl;
@@ -244,6 +261,7 @@ void	mergeInsert(std::vector<int> &initialElementsVec)
 	std::cout << "Ideal number of comparisons for " << initialElementsVec.size()
 				<< " is " << idealComparisonNumber(initialElementsVec.size())
 				<< std::endl;
+	return (pairsToInt(result));
 }
 
 // void	_deleteTree(Pair* node)

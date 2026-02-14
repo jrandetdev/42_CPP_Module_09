@@ -8,6 +8,17 @@
 #include <limits>
 #include <exception>
 
+bool	isSorted(std::vector<int> &result)
+{
+	std::vector<int>::iterator it;
+	for (it = result.begin() + 1; it < result.end(); it++)
+	{
+		if (*(it) < *(it - 1))
+			return false;
+	}
+	return true;
+}
+
 void	checkNegativeNumber(int value)
 {
 	if (value < 0)
@@ -66,7 +77,12 @@ int main(int argc, char **argv)
 	std::cout << "all good !" << std::endl;
 	// now I need to send my vector container for it to get sorted. 
 	std::cout << initialElementsVec << std::endl;
-	mergeInsert(initialElementsVec);
-
+	std::vector<int> result = mergeInsert(initialElementsVec);
+	if (!isSorted(result))
+	{
+		std::cout << "Array is not sorted" << std::endl;
+		return (1);
+	}
+	std::cout << "Array is sorted!" << std::endl;
 	return 0;
 }
