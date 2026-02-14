@@ -14,6 +14,25 @@
 #define MAG		"\033[35m"
 
 
+template <typename T>
+std::ostream &operator<<(std::ostream& outstream, std::vector<T> &vectorContainer)
+{
+	if (vectorContainer.empty())
+	{
+		outstream << "empty vector!";
+		return outstream;
+	}
+	//outstream << "Before:	";
+	outstream << '\n';
+	for (size_t i = 0; i < vectorContainer.size(); ++i)
+	{
+		outstream << vectorContainer[i];
+		if (i < vectorContainer.size() - 1)
+			outstream << " ";
+	}
+	return outstream;
+}
+
 // so where do I build the vector with ints and the dequeu?
 // probaby in the main directly and then they will be send via reference or pointer 
 
@@ -42,7 +61,6 @@ std::vector<Pair *>	sortTree(std::vector<Pair *> pairs);
 // void	deleteTree(Pair **nodeRef);
 
 
-std::ostream &operator<<(std::ostream& outstream, std::vector<int> vecContainer);
 std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs);
 void printTree(Pair* root, std::string indent = "", bool isLeft = true);
 
