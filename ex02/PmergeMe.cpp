@@ -30,6 +30,34 @@ Pair::Pair(Pair *a, Pair *b) : value(b->value), left(a), right(b)
 
 Pair::~Pair() {}
 
+// ===================== JACOB STYLE ============================
+
+int	getMinIndex(int a, int b)
+{
+	return (a < b ? a : b);
+}
+
+std::vector<int> generateJacobIndexes(size_t size) {
+	std::vector<int> indexes(size);
+	const int jacobSequence[] = {1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525, 699051, 1398101, 2796203};
+	int jacobIndex = 1;
+	size_t index = 0;
+	// taille des groupes c'est number - previous number
+	while (index < size)
+	{
+		int number = getMinIndex(jacobSequence[jacobIndex] - 2, static_cast<int>(size - 1));
+		int previousNumber = jacobSequence[jacobIndex - 1] - 2;
+		while (number > previousNumber)
+		{
+			indexes[number] = index; // 0
+			index++; // 1
+			number--;
+		}
+		jacobIndex++;
+	}
+	return indexes;
+}
+
 //===================== MERGE INSERTION START ====================
 
 void	updateUpperLimits(std::vector<size_t> &upperlimit, size_t insertionPoint)
@@ -37,7 +65,7 @@ void	updateUpperLimits(std::vector<size_t> &upperlimit, size_t insertionPoint)
 	for (size_t i = 0; i < upperlimit.size(); ++i)
 	{
 		if (upperlimit[i] >= insertionPoint)
-		upperlimit[i]++;
+			upperlimit[i]++;
 	}
 }
 
@@ -46,6 +74,7 @@ size_t	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToI
 	std::vector<Pair *>::iterator low = resultVector.begin();	// iterators 
 	std::vector<Pair *>::iterator high = resultVector.begin() + upperLimit;
 	size_t difference;
+	size_t insertionPoint;
 	
 	while (low < high)
 	{
@@ -62,14 +91,14 @@ size_t	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToI
 			insertCompCounter++;
 		}
 	}
+	insertionPoint = low - resultVector.begin();	
 	resultVector.insert(low, elementToInsert);
-	return (low - resultVector.begin());
+	return (insertionPoint);
 }
 
 void	buildUpperLimitArray(std::vector<size_t> &upperLimit, const std::vector<Pair *> &smaller, bool freeElementInserted)
 {
-	size_t i;
-	freeElementInserted ? i = 2 : i = 1;
+	size_t i = freeElementInserted ? 2 : 1;
 	for (size_t j = 0; j < smaller.size(); ++j)
 	{
 		upperLimit.push_back(i);
@@ -96,7 +125,6 @@ void	buildResultVector(const std::vector<Pair *> &pairs, std::vector<Pair *> &re
 	}
 }
 
-
 std::vector<Pair *>	sortTree(std::vector<Pair *> &pairs)
 {
 	if (pairs[0]->right == NULL)
@@ -111,16 +139,24 @@ std::vector<Pair *>	sortTree(std::vector<Pair *> &pairs)
 	buildSmallerVector(pairs, smaller);
 	buildUpperLimitArray(upperLimit, smaller, freeElementInserted);
 
-	std::cout << "\nsmaller elements to be inserted in result: " << smaller << std::endl;
+	std::cout << "\nresult array: " << result << std::endl;
+	std::cout << "smaller elements to be inserted in result: " << smaller << std::endl;
 	std::cout << "upperlimit array: " << upperLimit << std::endl;
 	
+	std::vector<int> jacobIndexes = generateJacobIndexes(smaller.size());
 	size_t insertionPoint;
 	for (size_t i = 0; i < smaller.size(); ++i)
 	{
-		if (smaller[i])
+		int index = jacobIndexes[i];
+		// int index = i;
+		if (smaller[index])
 		{
-			insertionPoint = insertElementInResult(result, smaller[i], upperLimit[i]);
+			insertionPoint = insertElementInResult(result, smaller[index], upperLimit[index]);
+			std::cout << "\ninsertionPoint " << insertionPoint << std::endl;
 			updateUpperLimits(upperLimit, insertionPoint);
+			std::cout << "inserted the number " << smaller[index]->value << std::endl;
+			std::cout << "result array: " << result << std::endl;
+			std::cout << "upperlimit array: " << upperLimit << std::endl;
 		}
 	}
 	
