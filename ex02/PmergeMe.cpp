@@ -196,14 +196,14 @@ std::vector<int> pairsToInt(const std::vector<Pair *> pairs)
 	std::vector<int> intResult;
 	std::vector<Pair *>::const_iterator it;
 	for (it = pairs.begin(); it < pairs.end(); ++it)
-	intResult.push_back((*it)->value);
+		intResult.push_back((*it)->value);
 	return (intResult);
 }
 
 void	intToPairs(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs)
 {
 	for (size_t i = 0; i < initialElementsVec.size(); ++i)
-	pairs.push_back(new Pair(initialElementsVec[i]));
+		pairs.push_back(new Pair(initialElementsVec[i]));
 }
 
 int idealComparisonNumber(int n)
