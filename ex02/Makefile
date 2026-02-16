@@ -2,7 +2,7 @@ NAME		=	PmergeMe
 DIR_SRC		=	./
 DIR_BUILD	=	./build
 CXX			=	c++
-CXXFLAGS	=	-std=c++98 -Wall -Werror -Wextra -g -pedantic 
+CXXFLAGS	=	-std=c++98 -Wall -Werror -Wextra -g
 LDINCLUDE	=	-I$(DIR_SRC)
 
 SRCS		=	main.cpp PmergeMe.cpp

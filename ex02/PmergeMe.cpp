@@ -140,9 +140,9 @@ std::vector<Pair *>	sortAndInsertByJacobStahl(std::vector<Pair *> &pairs)
 	buildSmallerVector(pairs, smaller);
 	buildUpperLimitArray(upperLimit, smaller, freeElementInserted);
 
-	std::cout << "\nresult array: " << result << std::endl;
-	std::cout << "smaller elements to be inserted in result: " << smaller << std::endl;
-	std::cout << "upperlimit array: " << upperLimit << std::endl;
+	DEBUG(std::cout << "\nresult array: " << result << std::endl;)
+	DEBUG(std::cout << "smaller elements to be inserted in result: " << smaller << std::endl;)
+	DEBUG(std::cout << "upperlimit array: " << upperLimit << std::endl;)
 	
 	std::vector<int> jacobIndexes(smaller.size());
 	generateJacobIndexes(smaller.size(), jacobIndexes);
@@ -155,13 +155,13 @@ std::vector<Pair *>	sortAndInsertByJacobStahl(std::vector<Pair *> &pairs)
 		{
 			insertionPoint = insertElementInResult(result, smaller[index], upperLimit[index]);
 			updateUpperLimits(upperLimit, insertionPoint);
-			std::cout << "inserted the number " << smaller[index]->value << std::endl;
-			std::cout << "result array: " << result << std::endl;
-			std::cout << "upperlimit array: " << upperLimit << std::endl;
+			DEBUG(std::cout << "inserted the number " << smaller[index]->value << std::endl;)
+			DEBUG(std::cout << "upperlimit array: " << upperLimit << std::endl;)
+			DEBUG(std::cout << "result array: " << result << std::endl;)
 		}
 	}
 	
-	std::cout << "\nafter insert sort, result: " << result << std::endl;
+	DEBUG(std::cout << "\nafter insert sort, result: " << result << std::endl;)
 	return (sortAndInsertByJacobStahl(result));
 }
 
@@ -173,8 +173,8 @@ std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs)
 	
 	if (pairs.size() == 1)
 	{
-		std::cout << GREEN << "\nthe top of my recursion tree" << RESET << std::endl;
-		printTree(pairs[0]);
+		DEBUG(std::cout << GREEN << "\nthe top of my recursion tree" << RESET << std::endl;)
+		DEBUG(printTree(pairs[0]);)
 		return (pairs);
 	}
 
@@ -229,11 +229,10 @@ std::vector<int> mergeInsert(std::vector<int> &initialElementsVec)
 	dummy = groupIntoPairs(pairs);
 	result = sortAndInsertByJacobStahl(dummy);
 
-	std::cout << "Comparisons made during pair making: " << pairCompCounter 
-	<< " and comparisons made during insertion " << insertCompCounter
-
-	<< " and total: " << pairCompCounter + insertCompCounter
- << std::endl;
+	DEBUG(std::cout << "Comparisons made during pair making: " << pairCompCounter)
+	DEBUG(<< " and comparisons made during insertion " << insertCompCounter)
+	DEBUG(<< " and total: " << pairCompCounter + insertCompCounter)
+ 	DEBUG(<< std::endl;)
 	return (pairsToInt(result));
 }
 
@@ -262,7 +261,7 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
 	{
 		if (!(*it))
 		{
-			std::cout << " NULL ";
+			DEBUG(std::cout << " NULL ";)
 			continue;
 		}
 
@@ -442,8 +441,8 @@ std::deque<Pair *> buildSortedPairTree(std::deque<Pair *> pairs)
 	
 	if (pairs.size() == 1)
 	{
-		std::cout << GREEN << "\nthe top of my recursion tree" << RESET << std::endl;
-		printTree(pairs[0]);
+		DEBUG(std::cout << GREEN << "\nthe top of my recursion tree" << RESET << std::endl;)
+		DEBUG(printTree(pairs[0]);)
 		return (pairs);
 	}
 
