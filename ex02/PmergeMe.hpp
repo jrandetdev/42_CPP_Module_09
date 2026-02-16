@@ -7,6 +7,7 @@
 #include <deque>
 #include <cstdlib>
 
+
 #define RED     "\033[31m"      /* Red */
 #define GREEN   "\033[32m"      /* Green */
 #define BLUE    "\033[34m"      /* Blue */
@@ -22,8 +23,6 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<T> &vectorContaine
 		outstream << "empty vector!";
 		return outstream;
 	}
-	//outstream << "Before:	";
-	//outstream << '\n';
 	for (size_t i = 0; i < vectorContainer.size(); ++i)
 	{
 		outstream << "[ " << vectorContainer[i] << " ]";
@@ -32,9 +31,6 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<T> &vectorContaine
 	}
 	return outstream;
 }
-
-// so where do I build the vector with ints and the dequeu?
-// probaby in the main directly and then they will be send via reference or pointer 
 
 class	Pair
 {
@@ -46,14 +42,11 @@ class	Pair
 		Pair *right;
 		Pair(int value); // what are the various
 		Pair(Pair *a, Pair *b);
-		Pair(Pair &a, Pair &b);
 		~Pair();
-
-		// I will need to build a pair based on the comparison
-		// Overload the comparison operators for the pairs <= >= == to compare them
 };
 
 std::vector<int> mergeInsert(std::vector<int> &initialElementsVec);
+std::deque<int> mergeInsert(std::deque<int> &initialElements);
 void	intToPairs(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
 std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs);
 std::vector<Pair *>	sortTree(std::vector<Pair *> &pairs);

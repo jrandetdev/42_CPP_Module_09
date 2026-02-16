@@ -8,6 +8,17 @@
 #include <limits>
 #include <exception>
 
+bool	isSorted(std::deque<int> &result)
+{
+	std::deque<int>::iterator it;
+	for (it = result.begin() + 1; it < result.end(); it++)
+	{
+		if (*(it) < *(it - 1))
+			return false;
+	}
+	return true;
+}
+
 bool	isSorted(std::vector<int> &result)
 {
 	std::vector<int>::iterator it;
@@ -42,7 +53,7 @@ void	checkIntMax(const std::string& input)
 	}
 }
 
-void	validatingArguments(int argc, char **argv, std::vector<int> &vecContainer)
+void	validatingArguments(int argc, char **argv, std::vector<int> &vecContainer, std::deque<int> &initialElementsDeq)
 {
 	int value = 0;
 	for (int i = 1; i < argc; ++i)
@@ -53,6 +64,7 @@ void	validatingArguments(int argc, char **argv, std::vector<int> &vecContainer)
 			throw std::runtime_error("Error: program only accept positive integers.");
 		checkNegativeNumber(value);
 		vecContainer.push_back(value);
+		initialElementsDeq.push_back(value);
 	}
 }
 
@@ -64,25 +76,37 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	std::vector<int> initialElementsVec;
-	// std::deque<int> dequeContainer;
+	std::deque<int> initialElementsDeq;
 	try {
-		validatingArguments(argc, argv, initialElementsVec);
+		validatingArguments(argc, argv, initialElementsVec, initialElementsDeq);
 	}
 	catch (std::exception &e)
 	{
 		std::cerr << RED << e.what() << RESET << std::endl;
 		return 1;
 	}
-
-	std::cout << "all good !" << std::endl;
-	// now I need to send my vector container for it to get sorted. 
-	std::cout << initialElementsVec << std::endl;
+	
 	std::vector<int> result = mergeInsert(initialElementsVec);
 	if (!isSorted(result))
 	{
-		std::cout << "Array is not sorted" << std::endl;
+		std::cout << "Vector Array is not sorted" << std::endl;
 		return (1);
 	}
-	std::cout << "Array is sorted!" << std::endl;
+	else
+	{
+		std::cout << "Vector Array is sorted!" << std::endl;
+	}
+	
+	std::deque<int> resultD = mergeInsert(initialElementsDeq);
+	if (!isSorted(resultD))
+	{
+		std::cout << "Deque Array is not sorted" << std::endl;
+		return (1);
+	}
+	else
+	{
+		std::cout << "Deque Array is sorted!" << std::endl;
+		return (1);
+	}
 	return 0;
 }

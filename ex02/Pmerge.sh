@@ -8,17 +8,11 @@ make re
 echo "====== TESTING PARSING ======="
 echo ""
 
-# echo "Test 1: valid input"
-# ./PmergeMe 5 18 10 16 9 4 1 2 6 17 11 19 7 21 14 8 3 12 13 20 15
-# echo ""
-
-echo "Debug counter test"
-./PmergeMe $RANDOMLIST
+echo "Test 1: valid input"
+./PmergeMe 5 18 10 16 9 4 1 2 6 17 11 19 7 21 14 8 3 12 13 20 15
 echo ""
 
-# ./PmergeMe 5 18 10 16 3
-
-#5 18 10 16 9 4 1 2 6 17 11 19 7 21 14 8 3 12 13 20
+# 5 18 10 16 9 4 1 2 6 17 11 19 7 21 14 8 3 12 13 20
 
 # echo "Test 2: invalid sequence with a letter"
 # ./PmergeMe a 2 3
@@ -40,3 +34,7 @@ echo ""
 # ./PmergeMe 1
 # echo ""
 
+
+# echo "Debug counter test"
+# ./PmergeMe $RANDOMLIST
+# echo ""
