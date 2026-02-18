@@ -6,9 +6,10 @@
 #include <vector>
 #include <deque>
 #include <cstdlib>
+#include <ctime>
+#include <sys/time.h>
 
-
-#define DEBUG(...)  __VA_ARGS__
+#define DEBUG(...)  //__VA_ARGS__
 #define RED     "\033[31m"      /* Red */
 #define GREEN   "\033[32m"      /* Green */
 #define BLUE    "\033[34m"      /* Blue */

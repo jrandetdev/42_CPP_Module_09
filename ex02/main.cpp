@@ -8,6 +8,23 @@
 #include <limits>
 #include <exception>
 
+static timeval getTime()
+{
+	timeval now;
+	gettimeofday(&now, NULL);
+	return now;
+}
+
+static double usElapsedFrom(timeval start)
+{
+	timeval now;
+
+	gettimeofday(&now, NULL);
+	long seconds = (now.tv_sec - start.tv_sec) * 1e6;
+	long microseconds = now.tv_usec - start.tv_usec;
+	return seconds + microseconds;
+}
+
 bool	isSorted(std::deque<int> &result)
 {
 	std::deque<int>::iterator it;
@@ -85,8 +102,9 @@ int main(int argc, char **argv)
 		std::cerr << RED << e.what() << RESET << std::endl;
 		return 1;
 	}
-	
+	timeval start = getTime();
 	std::vector<int> result = mergeInsert(initialElementsVec);
+	double elapsed_time = usElapsedFrom(start);
 	if (!isSorted(result))
 	{
 		std::cout << "Vector Array is not sorted" << std::endl;
@@ -94,10 +112,13 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		std::cout << "Vector Array is sorted!" << std::endl;
+		std::cout << "\nVECTOR: elapsed time in microseconds is " << elapsed_time << " μs" << std::endl;
+		DEBUG(std::cout << "Vector Array is sorted!" << std::endl;)
 	}
 	
+	start = getTime();
 	std::deque<int> resultD = mergeInsert(initialElementsDeq);
+	elapsed_time = usElapsedFrom(start);
 	if (!isSorted(resultD))
 	{
 		std::cout << "Deque Array is not sorted" << std::endl;
@@ -105,7 +126,8 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		std::cout << "Deque Array is sorted!" << std::endl;
+		std::cout << "\nDEQUE: elapsed time in microseconds is " << elapsed_time << " μs" << std::endl;
+		DEBUG(std::cout << "Deque Array is sorted!" << std::endl;)
 		return (1);
 	}
 	return 0;

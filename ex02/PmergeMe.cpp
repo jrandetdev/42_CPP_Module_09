@@ -236,7 +236,7 @@ std::vector<int> mergeInsert(std::vector<int> &initialElementsVec)
 	return (pairsToInt(result));
 }
 
-// void	_deleteTree(Pair* node)
+// void	_deleteTree(Pair *node)
 // {
 // 	if (node == NULL) return;
 // 	_deleteTree(node->left);
@@ -244,7 +244,7 @@ std::vector<int> mergeInsert(std::vector<int> &initialElementsVec)
 // 	delete node;
 // }
 
-//function to delete the tree
+// //function to delete the tree
 // void	deleteTree(Pair **nodeRef)
 // {
 // 	_deleteTree(*nodeRef);
@@ -487,12 +487,12 @@ std::deque<int> mergeInsert(std::deque<int> &initialElements)
 	intToPairs(initialElements, pairs);
 	dummy = buildSortedPairTree(pairs);
 	result = sortAndInsertByJacobStahl(dummy);
-	std::cout << "Comparisons made during pair making: " << pairCompCounter 
+	DEBUG(std::cout << "Comparisons made during pair making: " << pairCompCounter 
 	<< " and comparisons made during insertion " << insertCompCounter
-	<< " and total: " << pairCompCounter + insertCompCounter << std::endl;
+	<< " and total: " << pairCompCounter + insertCompCounter << std::endl);
 	
-	std::cout << "Ideal number of comparisons for " << initialElements.size()
+	DEBUG(std::cout << "Ideal number of comparisons for " << initialElements.size()
 	<< " is " << idealComparisonNumber(initialElements.size())
-	<< std::endl;
+	<< std::endl;)
 	return (pairsToInt(result));
 }
