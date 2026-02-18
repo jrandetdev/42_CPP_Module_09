@@ -233,23 +233,25 @@ std::vector<int> mergeInsert(std::vector<int> &initialElementsVec)
 	DEBUG(<< " and comparisons made during insertion " << insertCompCounter)
 	DEBUG(<< " and total: " << pairCompCounter + insertCompCounter)
  	DEBUG(<< std::endl;)
+	deleteTree(&dummy[0]);
 	return (pairsToInt(result));
 }
 
-// void	_deleteTree(Pair *node)
-// {
-// 	if (node == NULL) return;
-// 	_deleteTree(node->left);
-// 	_deleteTree(node->right);
-// 	delete node;
-// }
+void	_deleteTree(Pair *node)
+{
+	if (node == NULL) return;
+	_deleteTree(node->left);
+	_deleteTree(node->right);
+	std::cout << "delete node containing " << node->value << std::endl;
+	delete node;
+}
 
-// //function to delete the tree
-// void	deleteTree(Pair **nodeRef)
-// {
-// 	_deleteTree(*nodeRef);
-// 	*nodeRef = NULL;
-// }
+//function to delete the tree
+void	deleteTree(Pair **nodeRef)
+{
+	_deleteTree(*nodeRef);
+	*nodeRef = NULL;
+}
 //==================== DEBUG OUTPUT TO SEE PAIR ====================
 
 std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)

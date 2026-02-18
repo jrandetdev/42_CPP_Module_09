@@ -9,7 +9,7 @@
 #include <ctime>
 #include <sys/time.h>
 
-#define DEBUG(...)  //__VA_ARGS__
+#define DEBUG(...)  __VA_ARGS__
 #define RED     "\033[31m"      /* Red */
 #define GREEN   "\033[32m"      /* Green */
 #define BLUE    "\033[34m"      /* Blue */
@@ -52,8 +52,8 @@ std::deque<int> mergeInsert(std::deque<int> &initialElements);
 void	intToPairs(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
 std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs);
 std::vector<Pair *>	sortTree(std::vector<Pair *> &pairs);
-// void	_deleteTree(Pair* node);
-// void	deleteTree(Pair **nodeRef);
+void	_deleteTree(Pair* node);
+void	deleteTree(Pair **nodeRef);
 
 
 std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs);
