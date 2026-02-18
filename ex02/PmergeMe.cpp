@@ -222,19 +222,20 @@ std::vector<int> mergeInsert(std::vector<int> &initialElementsVec)
 	pairCompCounter = 0;
 	insertCompCounter = 0;
 	std::vector<Pair *> pairs;
-	std::vector<Pair *> dummy;
+	std::vector<Pair *> root;
 	std::vector<Pair *> result;
+	std::vector<int> finalResult;
 	
 	intToPairs(initialElementsVec, pairs);
-	dummy = groupIntoPairs(pairs);
-	result = sortAndInsertByJacobStahl(dummy);
+	root = groupIntoPairs(pairs);
+	result = sortAndInsertByJacobStahl(root);
 
 	DEBUG(std::cout << "Comparisons made during pair making: " << pairCompCounter)
 	DEBUG(<< " and comparisons made during insertion " << insertCompCounter)
 	DEBUG(<< " and total: " << pairCompCounter + insertCompCounter)
  	DEBUG(<< std::endl;)
-	deleteTree(&dummy[0]);
-	return (pairsToInt(result));
+	deleteTree(&root[0]);
+	return (finalResult);
 }
 
 void	_deleteTree(Pair *node)
@@ -242,7 +243,7 @@ void	_deleteTree(Pair *node)
 	if (node == NULL) return;
 	_deleteTree(node->left);
 	_deleteTree(node->right);
-	std::cout << "delete node containing " << node->value << std::endl;
+	DEBUG(std::cout << "delete node containing " << node->value << std::endl;)
 	delete node;
 }
 
@@ -483,12 +484,14 @@ std::deque<int> mergeInsert(std::deque<int> &initialElements)
 	insertCompCounter = 0;
 
 	std::deque<Pair *> pairs;
-	std::deque<Pair *> dummy;
+	std::deque<Pair *> root;
 	std::deque<Pair *> result;
+	std::deque<int>	finalResult;
 	
 	intToPairs(initialElements, pairs);
-	dummy = buildSortedPairTree(pairs);
-	result = sortAndInsertByJacobStahl(dummy);
+	root = buildSortedPairTree(pairs);
+	result = sortAndInsertByJacobStahl(root);
+	finalResult = pairsToInt(result);
 	DEBUG(std::cout << "Comparisons made during pair making: " << pairCompCounter 
 	<< " and comparisons made during insertion " << insertCompCounter
 	<< " and total: " << pairCompCounter + insertCompCounter << std::endl);
@@ -496,5 +499,6 @@ std::deque<int> mergeInsert(std::deque<int> &initialElements)
 	DEBUG(std::cout << "Ideal number of comparisons for " << initialElements.size()
 	<< " is " << idealComparisonNumber(initialElements.size())
 	<< std::endl;)
-	return (pairsToInt(result));
+	deleteTree(&root[0]);
+	return (finalResult);
 }

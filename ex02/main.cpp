@@ -107,13 +107,13 @@ int main(int argc, char **argv)
 	double elapsed_time = usElapsedFrom(start);
 	if (!isSorted(result))
 	{
-		std::cout << "Vector Array is not sorted" << std::endl;
+		std::cerr << "Vector Array is not sorted" << std::endl;
 		return (1);
 	}
 	else
 	{
-		std::cout << "\nVECTOR: elapsed time in microseconds is " << elapsed_time << " μs" << std::endl;
-		DEBUG(std::cout << "Vector Array is sorted!" << std::endl;)
+		std::cout << "Vector Array is sorted in " << elapsed_time << " μs" << std::endl;
+
 	}
 	
 	start = getTime();
@@ -121,13 +121,12 @@ int main(int argc, char **argv)
 	elapsed_time = usElapsedFrom(start);
 	if (!isSorted(resultD))
 	{
-		std::cout << "Deque Array is not sorted" << std::endl;
+		std::cerr << "Deque Array is not sorted" << std::endl;
 		return (1);
 	}
 	else
 	{
-		std::cout << "\nDEQUE: elapsed time in microseconds is " << elapsed_time << " μs" << std::endl;
-		DEBUG(std::cout << "Deque Array is sorted!" << std::endl;)
+		std::cout << "Deque Array is sorted in " << elapsed_time << " μs" << std::endl;
 		return (1);
 	}
 	return 0;
