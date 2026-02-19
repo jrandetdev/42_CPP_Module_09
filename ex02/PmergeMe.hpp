@@ -9,7 +9,7 @@
 #include <ctime>
 #include <sys/time.h>
 
-#define DEBUG(...) // __VA_ARGS__
+#define DEBUG(...)  //__VA_ARGS__
 #define RED     "\033[31m"      /* Red */
 #define GREEN   "\033[32m"      /* Green */
 #define BLUE    "\033[34m"      /* Blue */
@@ -27,7 +27,7 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<T> &vectorContaine
 	}
 	for (size_t i = 0; i < vectorContainer.size(); ++i)
 	{
-		outstream << "[ " << vectorContainer[i] << " ]";
+		outstream << vectorContainer[i];
 		if (i < vectorContainer.size() - 1)
 			outstream << " ";
 	}

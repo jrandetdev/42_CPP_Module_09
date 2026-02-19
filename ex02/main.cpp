@@ -20,9 +20,9 @@ static double usElapsedFrom(timeval start)
 	timeval now;
 
 	gettimeofday(&now, NULL);
-	long seconds = (now.tv_sec - start.tv_sec) * 1e6;
-	long microseconds = now.tv_usec - start.tv_usec;
-	return seconds + microseconds;
+	double seconds = static_cast<double>(now.tv_sec - start.tv_sec);
+	double microseconds = static_cast<double>(now.tv_usec - start.tv_usec);
+	return seconds * 1000000.0 + microseconds;
 }
 
 bool	isSorted(std::deque<int> &result)
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 {
 	if (argc <= 3)
 	{
-		std::cerr << RED << "Error: please input at least two positive intergers." << RESET << std::endl; // I think I will need more than one to even begin but for now this is it
+		std::cerr << RED << "Error: please input at least two positive integers." << RESET << std::endl; // I think I will need more than one to even begin but for now this is it
 		return 1;
 	}
 	std::vector<int> initialElementsVec;
@@ -112,8 +112,10 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		std::cout << "Vector Array is sorted in " << elapsed_time << " μs" << std::endl;
-
+		std::cout << "Before:	" << initialElementsVec << std::endl;
+		std::cout << "After:	" << result << std::endl;
+		std::cout << "Time to process a range of " << initialElementsVec.size()\
+					<< " elements with std::vector: : " << std::fixed << std::setprecision(5) <<  elapsed_time << " us" << std::endl;
 	}
 	
 	start = getTime();
@@ -126,8 +128,8 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		std::cout << "Deque Array is sorted in " << elapsed_time << " μs" << std::endl;
-		return (1);
+		std::cout << "Time to process a range of " << initialElementsDeq.size()\
+					<< " elements with std::deque: : " << elapsed_time << " us" << std::endl;
 	}
 	return 0;
 }

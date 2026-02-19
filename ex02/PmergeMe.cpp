@@ -18,7 +18,7 @@ Pair::Pair(int value) : value(value), left(NULL), right(NULL) {}
 Pair::Pair(Pair *a, Pair *b) : value(b->value), left(a), right(b)
 {
 	if (!a || !b)
-	return;
+		return;
 	pairCompCounter++;
 	if (a->value > b->value)
 	{
@@ -30,7 +30,40 @@ Pair::Pair(Pair *a, Pair *b) : value(b->value), left(a), right(b)
 
 Pair::~Pair() {}
 
-// ===================== JACOB STYLE ============================
+// ==================== DEBUG INFO =============================
+
+int idealComparisonNumber(int numberOfElements)
+{
+	int sum = 0;
+	for (int k = 1; k <= numberOfElements; ++k) {
+		double value = (3.0 / 4.0) * k;
+		sum += static_cast<int>(std::ceil(log2(value)));
+	}
+	return sum;
+}
+
+//======================= DELETE FUNCTIONS FOR MEMORY =======================
+
+/**
+ * @brief recursive function to clean up tree
+ * 
+ * @param node of type Pair *
+ */
+void	_deleteTree(Pair *node)
+{
+	if (node == NULL) return;
+	_deleteTree(node->left);
+	_deleteTree(node->right);
+	delete node;
+}
+
+void	deleteTree(Pair **nodeRef)
+{
+	_deleteTree(*nodeRef);
+	*nodeRef = NULL;
+}
+
+// ===================== JACOB STAHL ============================
 
 int	getMinIndex(int a, int b)
 {
@@ -40,14 +73,15 @@ int	getMinIndex(int a, int b)
 void generateJacobIndexes(size_t size, std::vector<int> &jacobIndexes) {
 	// std::vector<int> indexes(size);
 	const int jacobSequence[] = {1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525, 699051, 1398101, 2796203};
-	int jacobIndex = 1;
-	size_t index = 0;
-	// taille des groupes c'est number - previous number
-	while (index < size)
+
+	int jacobIndex = 1;		// jacobIndex starts at 1 because we start at 3 in the sequence
+	size_t index = 0;		// index used to go through the jacobSequence
+
+	while (index < size)	// going through the jacobsequence as long as index is smaller than size
 	{
-		int number = getMinIndex(jacobSequence[jacobIndex] - 2, static_cast<int>(size - 1));
+		int number = getMinIndex(jacobSequence[jacobIndex] - 2, static_cast<int>(size - 1));	// treat the edge case of having 13 elements to sort, the next jacobSequence[jacobIndex] would be 21 which does not work. so we calculate the min
 		int previousNumber = jacobSequence[jacobIndex - 1] - 2;
-		while (number > previousNumber)
+		while (number > previousNumber)	// 
 		{
 			jacobIndexes[number] = index; // 0
 			index++; // 1
@@ -57,7 +91,7 @@ void generateJacobIndexes(size_t size, std::vector<int> &jacobIndexes) {
 	}
 }
 
-//===================== MERGE INSERTION START ====================
+//===================== VECTOR MERGE INSERT SORT ====================
 
 void	updateUpperLimits(std::vector<size_t> &upperlimit, size_t insertionPoint)
 {
@@ -82,14 +116,12 @@ size_t	insertElementInResult(std::vector<Pair *> &resultVector, Pair *elementToI
 		if (elementToInsert->value >= (*mid)->value)
 		{
 			low = mid + 1;
-			insertCompCounter
-		++;
+			insertCompCounter++;
 		}
 		else
 		{
-			high = mid;
-			insertCompCounter
-		++;
+			high = mid; // the reason for the +1 not here is because of the exclusion [ ( of the insert function.
+			insertCompCounter++;
 		}
 	}
 	insertionPoint = low - resultVector.begin();	
@@ -115,7 +147,6 @@ void	buildSmallerVector(const std::vector<Pair *> &pairs, std::vector<Pair *> &s
 
 void	buildResultVector(const std::vector<Pair *> &pairs, std::vector<Pair *> &result, bool &freeElementInserted)
 {
-	// BUILDING THE RESULT VECTOR
 	for (size_t i = 0; i < pairs.size(); ++i)
 		result.push_back(pairs[i]->right);
 	
@@ -128,6 +159,7 @@ void	buildResultVector(const std::vector<Pair *> &pairs, std::vector<Pair *> &re
 
 std::vector<Pair *>	sortAndInsertByJacobStahl(std::vector<Pair *> &pairs)
 {
+	// Stop condition of the recursion, the right element is NULL meaning I have hit a node where left and right are NULL
 	if (pairs[0]->right == NULL)
 		return pairs;
 
@@ -147,10 +179,10 @@ std::vector<Pair *>	sortAndInsertByJacobStahl(std::vector<Pair *> &pairs)
 	std::vector<int> jacobIndexes(smaller.size());
 	generateJacobIndexes(smaller.size(), jacobIndexes);
 	size_t insertionPoint;
+
 	for (size_t i = 0; i < smaller.size(); ++i)
 	{
 		int index = jacobIndexes[i];
-		// int index = i;
 		if (smaller[index])
 		{
 			insertionPoint = insertElementInResult(result, smaller[index], upperLimit[index]);
@@ -165,7 +197,7 @@ std::vector<Pair *>	sortAndInsertByJacobStahl(std::vector<Pair *> &pairs)
 	return (sortAndInsertByJacobStahl(result));
 }
 
-std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs)
+std::vector<Pair *> buildSortedPairTree(std::vector<Pair *> pairs)
 {
 	std::vector<Pair *> treeFloor;
 	std::vector<Pair *>::iterator it;
@@ -189,7 +221,7 @@ std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs)
 	if (lastElement != pairs.end())
 		treeFloor.push_back(new Pair(NULL, *lastElement));
 	
-	return (groupIntoPairs(treeFloor));
+	return (buildSortedPairTree(treeFloor));
 }
 
 std::vector<int> pairsToInt(const std::vector<Pair *> pairs)
@@ -207,117 +239,33 @@ void	intToPairs(const std::vector<int> &initialElementsVec, std::vector<Pair *> 
 		pairs.push_back(new Pair(initialElementsVec[i]));
 }
 
-int idealComparisonNumber(int n)
-{
-	int sum = 0;
-	for (int k = 1; k <= n; ++k) {
-		double value = (3.0 / 4.0) * k;
-		sum += static_cast<int>(std::ceil(std::log2(value)));
-	}
-	return sum;
-}
-
 std::vector<int> mergeInsert(std::vector<int> &initialElementsVec)
 {
 	pairCompCounter = 0;
 	insertCompCounter = 0;
+
 	std::vector<Pair *> pairs;
 	std::vector<Pair *> root;
 	std::vector<Pair *> result;
 	std::vector<int> finalResult;
 	
-	intToPairs(initialElementsVec, pairs);
-	root = groupIntoPairs(pairs);
+	intToPairs(initialElementsVec, pairs);		// Transform the initial list into the Pair format (Pair being the class I have)
+	root = buildSortedPairTree(pairs);				// 
 	result = sortAndInsertByJacobStahl(root);
+	finalResult = pairsToInt(result);
 
 	DEBUG(std::cout << "Comparisons made during pair making: " << pairCompCounter)
 	DEBUG(<< " and comparisons made during insertion " << insertCompCounter)
 	DEBUG(<< " and total: " << pairCompCounter + insertCompCounter)
  	DEBUG(<< std::endl;)
+	DEBUG(std::cout << "Ideal number of comparisons for " << initialElementsVec.size()
+	<< " is " << idealComparisonNumber(initialElementsVec.size())
+	<< std::endl;)
 	deleteTree(&root[0]);
 	return (finalResult);
 }
 
-void	_deleteTree(Pair *node)
-{
-	if (node == NULL) return;
-	_deleteTree(node->left);
-	_deleteTree(node->right);
-	DEBUG(std::cout << "delete node containing " << node->value << std::endl;)
-	delete node;
-}
-
-//function to delete the tree
-void	deleteTree(Pair **nodeRef)
-{
-	_deleteTree(*nodeRef);
-	*nodeRef = NULL;
-}
-//==================== DEBUG OUTPUT TO SEE PAIR ====================
-
-std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
-{
-	std::vector<Pair *>::iterator it;
-
-	//outstream << '\n';
-	for (it = pairs.begin(); it < pairs.end(); ++it)
-	{
-		if (!(*it))
-		{
-			DEBUG(std::cout << " NULL ";)
-			continue;
-		}
-
-		if ((*it)->left)
-			outstream << '[' << MAG << (*it)->left->value << RESET; // Left part
-		else
-			outstream << '[' << MAG << "X" << RESET;
-
-		outstream << " " << (*it)->value << " ";
-		if ((*it)->right)
-			outstream << MAG << (*it)->right->value << RESET << ']';
-		else
-			outstream << MAG << "X" << RESET << ']';
-
-		if (it < pairs.end() - 1)
-			outstream << " ";
-	}
-	return outstream;
-}
-
-
-void printTree(Pair* root, std::string indent, bool isLeft)
-{
-	if (root == NULL)
-	{
-		std::cout << indent << (isLeft ? "└── " : "┌── ") << RED << "NULL" << RESET << std::endl;
-		return;
-	}
-
-	if (root->right || root->left)
-	{
-		if (root->right)
-			printTree(root->right, indent + (isLeft ? "│   " : "    "), false);
-		else
-			std::cout << indent << (isLeft ? "│   " : "    ") << "┌── " << RED << "X" << RESET << std::endl;
-	}
-
-	std::cout << indent;
-	if (isLeft)
-		std::cout << "└── ";
-	else
-		std::cout << "┌── ";
-	
-	std::cout << "[" << root->value << "]" << std::endl;
-
-	if (root->left || root->right)
-	{
-		if (root->left)
-			printTree(root->left, indent + (isLeft ? "    " : "│   "), true);
-		else
-			std::cout << indent << (isLeft ? "    " : "│   ") << "└── " << RED << "X" << RESET << std::endl;
-	}
-}
+//=====================  DEQUE MERGE INSERTION START ====================
 
 void generateJacobIndexes(size_t size, std::deque<int> &jacobIndexes) {
 	// std::deque<int> indexes(size);
@@ -338,8 +286,6 @@ void generateJacobIndexes(size_t size, std::deque<int> &jacobIndexes) {
 		jacobIndex++;
 	}
 }
-
-//=====================  VECTOR MERGE INSERTION START ====================
 
 void	updateUpperBound(std::deque<size_t> &upperlimit, size_t insertionPoint)
 {
@@ -501,4 +447,70 @@ std::deque<int> mergeInsert(std::deque<int> &initialElements)
 	<< std::endl;)
 	deleteTree(&root[0]);
 	return (finalResult);
+}
+
+//==================== DEBUG OUTPUT TO SEE PAIR ====================
+
+std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs)
+{
+	std::vector<Pair *>::iterator it;
+
+	//outstream << '\n';
+	for (it = pairs.begin(); it < pairs.end(); ++it)
+	{
+		if (!(*it))
+		{
+			DEBUG(std::cout << " NULL ";)
+			continue;
+		}
+
+		if ((*it)->left)
+			outstream << '[' << MAG << (*it)->left->value << RESET; // Left part
+		else
+			outstream << '[' << MAG << "X" << RESET;
+
+		outstream << " " << (*it)->value << " ";
+		if ((*it)->right)
+			outstream << MAG << (*it)->right->value << RESET << ']';
+		else
+			outstream << MAG << "X" << RESET << ']';
+
+		if (it < pairs.end() - 1)
+			outstream << " ";
+	}
+	return outstream;
+}
+
+
+void printTree(Pair* root, std::string indent, bool isLeft)
+{
+	if (root == NULL)
+	{
+		std::cout << indent << (isLeft ? "└── " : "┌── ") << RED << "NULL" << RESET << std::endl;
+		return;
+	}
+
+	if (root->right || root->left)
+	{
+		if (root->right)
+			printTree(root->right, indent + (isLeft ? "│   " : "    "), false);
+		else
+			std::cout << indent << (isLeft ? "│   " : "    ") << "┌── " << RED << "X" << RESET << std::endl;
+	}
+
+	std::cout << indent;
+	if (isLeft)
+		std::cout << "└── ";
+	else
+		std::cout << "┌── ";
+	
+	std::cout << "[" << root->value << "]" << std::endl;
+
+	if (root->left || root->right)
+	{
+		if (root->left)
+			printTree(root->left, indent + (isLeft ? "    " : "│   "), true);
+		else
+			std::cout << indent << (isLeft ? "    " : "│   ") << "└── " << RED << "X" << RESET << std::endl;
+	}
 }
