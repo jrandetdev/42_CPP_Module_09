@@ -49,17 +49,8 @@ class	Pair
 
 std::vector<int> mergeInsert(std::vector<int> &initialElementsVec);
 std::deque<int> mergeInsert(std::deque<int> &initialElements);
-void	intToPairs(const std::vector<int> &initialElementsVec, std::vector<Pair *> &pairs);
-std::vector<Pair *> groupIntoPairs(std::vector<Pair *> pairs);
-std::vector<Pair *>	sortTree(std::vector<Pair *> &pairs);
-void	_deleteTree(Pair* node);
-void	deleteTree(Pair **nodeRef);
-
 
 std::ostream &operator<<(std::ostream& outstream, std::vector<Pair *> pairs);
 void printTree(Pair* root, std::string indent = "", bool isLeft = true);
-
-
-
 
 #endif
