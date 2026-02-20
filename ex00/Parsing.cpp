@@ -50,7 +50,7 @@ void	validateValue(float value)
 	if (value < 0)
 		throw std::runtime_error("Error: not a positive number.");
 	else if (value > 1000)
-		throw std::runtime_error("Error: too large of a number.");
+		throw std::runtime_error("Error: too large a number.");
 }
 
 
@@ -69,14 +69,14 @@ void	validateDate(int year, int month, int day)
 	if (month == 2)
 	{
 		if (isLeap(year) && day > 29)
-			throw std::runtime_error("Error: leap year " + std::to_string(year) + " contains 29 days in February");
+			throw std::runtime_error("Error: year is a leap year, day value can only go up to the 29th of Feb.");
 		else if (!isLeap(year) && day > 28)
-			throw std::runtime_error("Error: " + std::to_string(year) + " is not. leap year and only contains 28 days in February.");
+			throw std::runtime_error("Error: year is a leap year, day value can only go up to the 28th of Feb.");
 	}
 	
 	// Handle april june september have  30 days max
 	if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)
-		throw std::runtime_error("Error: " + std::to_string(month) + " only contains 30 days.");
+		throw std::runtime_error("Error: the given month only contains 30 days and not more.");
 }
 	
 bool	isLeap(int year)

@@ -62,6 +62,7 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 		}
 
 		size_t delimPos = line.find(verticalBar);
+		// extracting the date so that it is a string inside the map container 
 		date = line.substr(0, delimPos);
 
 		// Get the price of the amount of bitcoin at that date

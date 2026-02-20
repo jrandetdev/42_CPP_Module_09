@@ -14,7 +14,6 @@
 # define MINYEAR 2009
 # define MAXYEAR 2026
 
-
 class	BitcoinExchange
 {
 	private:

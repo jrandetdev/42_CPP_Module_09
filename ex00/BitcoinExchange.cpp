@@ -53,7 +53,8 @@ bool	BitcoinExchange::getBitcoinPriceatDate(const std::string& date, float value
 	// this is in case the date is earlier but this check should never happen because we did a minyear check
 	if (it == this->historicalData.begin())
 		return false;
-	// in all cases, it will go back 1. so if our date is missing, then it will give the one right before that one
+	// in all cases, it will go back 1. so if our date is missing, then it will give the one right before that one, otherwise if 
+	// there is a date above the one we are actually looking for, it will just go back one.
 	--it;
 	result = it->second * value;
 	std::cout << date << " => " << value << " = " << result << std::endl;
