@@ -10,26 +10,26 @@ RPN::RPN(const std::string& expression) : tokenStack(), m_rhsOperand(0), m_lhsOp
 	for (size_t i = 0; i < expression.length(); ++i)
 	{
 		if (validChars.find(expression[i]) == std::string::npos)
-			throw std::runtime_error("Error");
+			throw std::runtime_error("Error, invalid char that does not belong to the following: 0123456789+*-/ ");
 
 		switch(expression[i]) {
 			case '+':
 				getOperands();
-				tokenStack.push(m_rhsOperand + m_lhsOperand);
+				tokenStack.push(m_lhsOperand + m_rhsOperand);
 				break;
 			case '-':
 				getOperands();
-				tokenStack.push(m_rhsOperand - m_lhsOperand);
+				tokenStack.push(m_lhsOperand - m_rhsOperand);
 				break;
 			case '/':
 				getOperands();
-				if (m_lhsOperand == 0)
-					throw std::runtime_error("Error");
-				tokenStack.push(m_rhsOperand / m_lhsOperand);
+				if (m_rhsOperand == 0)
+					throw std::runtime_error("Error: division by zero is not possible.");
+				tokenStack.push(m_lhsOperand / m_rhsOperand);
 				break;
 			case '*':
 				getOperands();
-				tokenStack.push(m_rhsOperand * m_lhsOperand);
+				tokenStack.push(m_lhsOperand * m_rhsOperand);
 				break;
 			case ' ':
 				break;
@@ -38,8 +38,10 @@ RPN::RPN(const std::string& expression) : tokenStack(), m_rhsOperand(0), m_lhsOp
 				break;
 		}
 	}
+	// Check that only the result remains
 	if (tokenStack.size() != 1)
-		throw std::runtime_error("Error");
+		throw std::runtime_error("Error: invalid expression remains that cannot be calculated.");
+	// Otherwise push the result to the standard output
 	std::cout << tokenStack.top() << std::endl;
 }
 
@@ -62,10 +64,11 @@ RPN::~RPN() {}
 
 void	RPN::getOperands()
 {
-	m_lhsOperand = tokenStack.top();
-	tokenStack.pop();
-	if (tokenStack.empty())
-		throw std::runtime_error("Error");
 	m_rhsOperand = tokenStack.top();
+	tokenStack.pop();
+	// 
+	if (tokenStack.empty())
+		throw std::runtime_error("Error, incomplete expression: need two operands when the operator is called.");
+	m_lhsOperand = tokenStack.top();
 	tokenStack.pop();
 }
