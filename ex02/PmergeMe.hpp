@@ -34,6 +34,15 @@ std::ostream &operator<<(std::ostream& outstream, std::vector<T> &vectorContaine
 	return outstream;
 }
 
+/**
+ * @brief Pair class which will contain
+ * * two pointers: one to the left pair member and one to the right, with left->value < right->value\
+ * * the value is the biggest value of the two 
+ * * the canonical form with the default construtor in private (no sense to build a pair of nothing)
+ * * a constructor taking a single int to build the leaves of the tree structure in PmergeMe.cpp buildSortedPairTree
+ * * a constructor taking two pointers to pair to build the node which will point to its two Pair children
+ * 
+ */
 class	Pair
 {
 	private:
@@ -47,6 +56,12 @@ class	Pair
 		~Pair();
 };
 
+/**
+ * @brief sorts a set of positive integers using the Ford-Johnson algoritm
+ * 
+ * @param initialElementsVec Reference to the vector to be sorted
+ * @return std::vector<int> A new vector with the sorted integers (ascending)
+ */
 std::vector<int> mergeInsert(std::vector<int> &initialElementsVec);
 std::deque<int> mergeInsert(std::deque<int> &initialElements);
 
