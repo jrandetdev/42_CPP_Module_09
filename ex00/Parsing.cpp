@@ -3,7 +3,7 @@
 
 bool	isValidExtension(const std::string& filename, const std::string& extension)
 {
-	// Checking hte extension to see if it is correct
+	// Checking the extension to see if it is correct
 	size_t dotPos = filename.find_last_of('.');
 	if (filename.substr(dotPos + 1) != extension)
 	{

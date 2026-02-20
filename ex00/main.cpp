@@ -9,7 +9,7 @@ static bool readAndTreatData(const std::string& filename, BitcoinExchange& btcDa
 int	main(int argc, char **argv)
 {
 	if (argc != 2) { std::cerr << RED << "Error: could not open a file." << RESET << std::endl; return 1; }
-
+	
 	try {
 		BitcoinExchange btcdata("data.csv");
 		if (!readAndTreatData(argv[1], btcdata)) return 1;
